@@ -1,14 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
-    </PropertyGroup>
+      <UserSecretsId>9b27e2c1-18f1-45e4-949b-d0feb481d366</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\CocktailDbSite.Application\CocktailDbSite.Application.csproj" />
+      <ProjectReference Include="..\CocktailDbSite.Infrastructure\CocktailDbSite.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
