@@ -2,34 +2,78 @@
 @attribute [StreamRendering]
 @using CocktailDbSite.Application.Services
 @using CocktailDbSite.Domain.Models
+@using CocktailDbSite.Domain.Models.DrinkModels
+@using CocktailDbSite.Domain.Models.WebpageModels
 @rendermode InteractiveServer
-@inject TestTableService TestTableService
+@inject CocktailDbService CocktailDbService
 
 <PageTitle>Weather</PageTitle>
 
 <div>
     <h1>Test Table Values</h1>
-    @if(_testTables != null)
+    @if(_drinksList != null)
     {
-        @foreach (TestTable table in _testTables)
-        {
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">@table.TestCol</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">@table.Id</h6>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    @if (_drinksList.AlcoholicDrinks.Any())
+                    {
+                        @foreach (Drink drink in _drinksList.AlcoholicDrinks)
+                        {
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@drink.Name</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="col-md-6">
+                    @if (_drinksList.NonAlcoholicDrinks.Any())
+                    {
+                        @foreach (Drink drink in _drinksList.NonAlcoholicDrinks)
+                        {
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@drink.Name</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
+                                </div>
+                            </div>
+                        }
+                    }
                 </div>
             </div>
-        }
+        </div>
+        
     }
     <button class="btn btn-primary" @onclick="LoadTestTables">Load the test table</button>
 </div>
 
 
 @code {
-    private List<TestTable> _testTables = new List<TestTable>();
+    private HomepageDrinkLists? _drinksList = new HomepageDrinkLists();
     
     private async Task LoadTestTables()
     {
-        _testTables = await TestTableService.GetAllTestTablesAsync();
+        _drinksList = await CocktailDbService.GetHomepageDrinksAsync() ?? new HomepageDrinkLists();
+        var drinkById = await CocktailDbService.GetDrinkById(11007);
+        var drinksByName = await CocktailDbService.GetDrinksByName("Margarita");
+        Console.WriteLine(drinkById?.ToString() ?? string.Empty);
+        if (drinksByName != null)
+        {
+            foreach (Drink drink in drinksByName)
+            {
+                Console.WriteLine(drink.ToString());   
+            }
+        }
+
+        if (drinkById != null && drinkById.Measurements.Any())
+        {
+            foreach (Measurement measurement in drinkById.Measurements)
+            {
+                Console.WriteLine(measurement.ToString());
+            }
+        }
     }
 }

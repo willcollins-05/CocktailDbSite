@@ -1,4 +1,5 @@
 ﻿using CocktailDbSite.Domain.Interfaces;
+using CocktailDbSite.Domain.Services;
 using CocktailDbSite.Infrastructure.Data;
 using CocktailDbSite.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<CocktailDbContext>(o => o.UseNpgsql(configuration["CONNECTION_STRING"]));
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        //TODO: Add services.AddHttpClient<Interface, Service>() for the CocktailDB API
+        services.AddHttpClient<ICocktailProvider, CocktailDbService>();
         return services;
     }
 }
