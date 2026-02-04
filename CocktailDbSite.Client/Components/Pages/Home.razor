@@ -1,4 +1,11 @@
 ﻿@page "/"
+@attribute [StreamRendering]
+@using CocktailDbSite.Application.Services
+@using CocktailDbSite.Domain.Models
+@using CocktailDbSite.Domain.Models.DrinkModels
+@using CocktailDbSite.Domain.Models.WebpageModels
+@rendermode InteractiveServer
+@inject CocktailDbService CocktailDbService
 
 <PageTitle>Cocktail Bar</PageTitle>
 
@@ -24,164 +31,58 @@
     
     <hr/>
     
-    <div class="d-flex justify-content-around pt-6">
-        <div>
-            <h2 class="border border-black">Non Alcoholic</h2>
-        </div>
-        <div>
-            <h2 class="border border-black">Alcoholic</h2>
-        </div>
-    </div>
-    <div class="d-flex align-items-stretch justify-content-around">
-        <div id="non-alcoholic">
-            <ul id="non-alcoholic-list">
-                <li class="pt-3">
-                    <div>
-                        <div class="d-flex">
-                            <p>drink name</p>
-                            <button> see more</button>
-                            <button> add to cart</button>
-                        </div>
-                        <img alt="image-photo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAADGCAMAAAAqo6adAAAAL
-            VBMVEXQ0NDw8PDd3d3r6+vg4ODk5OTb29vNzc3v7+/Y2NjT09Pn5+fS0tLj4+P09PR7pp5pAAADU0lEQVR4nO2cCZaCMBAFZZGw
-            KPc/7qjoqEg2yNLp/nWCrkrIqOTN6QQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhKDUOHTdMJ5U7kmy0E3VvNC0F3EJ2n6u3sz
-            TKKmAGr7sHwVaOQFUu7a/B2hyj5UKdd3Qv9HnHiwNm6v/QMYOGHT6VTVJOAN6rX41D7mHi4666vVFHAEm/Wquc48Xm9roXzXMTw
-            DVmP3nMfeEkdEf/gvMHwDDH7+FM+8HwPL4sz8AWvib6Xn7S9//ne38Y/4VYLT5t7knjIuy6HP/BqQmS4DcA8bG8gGI+eNv+wLA/
-            uO/ZQOwX37LCXDJPV0KtD+AcT/8n4w6fSmvQLYDiNE/nS7NxiHYidG/vwNZL/4k4uh7c7m+X4HO1TQIWvwXw7XpbzTnWt7r/wW1
-            kHsMAAAAAAAAAAAAAFAY/N8imlDdXAv+Te2mXwkOoB5XjMQGUM8bVkIDqP8LZiIDqI/7dQIDqK/rheICqNXtSmEB1vrCAqj691K
-            BoABb+oIC/G5+UQF0+kICbG9+MQFM+gIulpn12QfQP/siHgHb6jMP4KLP+BFw02cbwP7ssw7guvqPAPzOAB99hjvAT59dAF99+g
-            GUzzVwf33qZ4A6eyzQHn3aO+D+f7Gc59unTznA8m/BHOfbq083wG3zu8/n/rGnlAAvfaf59q8+1QBvfYf5julTDPCpb53vqD69A
-            N/6lvmO61MLsNY3zhdCn1aAX33DfGH0KQXY0tfOF0qfToBtfc184fSpBNDpb84XUp9GAL3+xnxh9SkEMOn/zBdaP38As/5qvvD6
-            uQPY9L/mi6GfN4Bd/2O+OPo5A7jo/88XSz9fADf953zx9HMFcNV/zBdTP08Ad/37fFH1cwTw0U9A6gDE9FMHIKefNgBB/ZQBSOq
-            nC0BUP1UAsvppAhDWTxGAtH78AMT1Ywcgrx83QAH6MQMUoR8vQCH6sQIUox8nQEH6MQIUpR8+QGH6oQMUpx82QIH6IQMUqR8uQK
-            H6oQIUqx8mQMH6IQIUrX88QOH6RwMUr38sAAP9IwFY6O8PwER/bwA2+vsCMNLfE4CVvn8AZvq+Adjpewbgp+8VoO0bhvSd+/5ni
-            fv+BwAAAAAAAAAAADNq2fwBVDxKltP2bpcAAAAASUVORK5CYII="/>
-                    </div>
-                </li>
-                <li class="pt-3">
-                    <div>
-                        <div class="d-flex">
-                            <p>drink name</p>
-                            <button> see more</button>
-                            <button> add to cart</button>
-                        </div>
-                        <img alt="image-photo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAADGCAMAAAAqo6adAAAAL
-            VBMVEXQ0NDw8PDd3d3r6+vg4ODk5OTb29vNzc3v7+/Y2NjT09Pn5+fS0tLj4+P09PR7pp5pAAADU0lEQVR4nO2cCZaCMBAFZZGw
-            KPc/7qjoqEg2yNLp/nWCrkrIqOTN6QQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhKDUOHTdMJ5U7kmy0E3VvNC0F3EJ2n6u3sz
-            TKKmAGr7sHwVaOQFUu7a/B2hyj5UKdd3Qv9HnHiwNm6v/QMYOGHT6VTVJOAN6rX41D7mHi4666vVFHAEm/Wquc48Xm9roXzXMTw
-            DVmP3nMfeEkdEf/gvMHwDDH7+FM+8HwPL4sz8AWvib6Xn7S9//ne38Y/4VYLT5t7knjIuy6HP/BqQmS4DcA8bG8gGI+eNv+wLA/
-            uO/ZQOwX37LCXDJPV0KtD+AcT/8n4w6fSmvQLYDiNE/nS7NxiHYidG/vwNZL/4k4uh7c7m+X4HO1TQIWvwXw7XpbzTnWt7r/wW1
-            kHsMAAAAAAAAAAAAAFAY/N8imlDdXAv+Te2mXwkOoB5XjMQGUM8bVkIDqP8LZiIDqI/7dQIDqK/rheICqNXtSmEB1vrCAqj691K
-            BoABb+oIC/G5+UQF0+kICbG9+MQFM+gIulpn12QfQP/siHgHb6jMP4KLP+BFw02cbwP7ssw7guvqPAPzOAB99hjvAT59dAF99+g
-            GUzzVwf33qZ4A6eyzQHn3aO+D+f7Gc59unTznA8m/BHOfbq083wG3zu8/n/rGnlAAvfaf59q8+1QBvfYf5julTDPCpb53vqD69A
-            N/6lvmO61MLsNY3zhdCn1aAX33DfGH0KQXY0tfOF0qfToBtfc184fSpBNDpb84XUp9GAL3+xnxh9SkEMOn/zBdaP38As/5qvvD6
-            uQPY9L/mi6GfN4Bd/2O+OPo5A7jo/88XSz9fADf953zx9HMFcNV/zBdTP08Ad/37fFH1cwTw0U9A6gDE9FMHIKefNgBB/ZQBSOq
-            nC0BUP1UAsvppAhDWTxGAtH78AMT1Ywcgrx83QAH6MQMUoR8vQCH6sQIUox8nQEH6MQIUpR8+QGH6oQMUpx82QIH6IQMUqR8uQK
-            H6oQIUqx8mQMH6IQIUrX88QOH6RwMUr38sAAP9IwFY6O8PwER/bwA2+vsCMNLfE4CVvn8AZvq+Adjpewbgp+8VoO0bhvSd+/5ni
-            fv+BwAAAAAAAAAAADNq2fwBVDxKltP2bpcAAAAASUVORK5CYII="/>
-                    </div>
-                </li>
-                <li class="pt-3">
-                    <div>
-                        <div class="d-flex">
-                            <p>drink name</p>
-                            <button> see more</button>
-                            <button> add to cart</button>
-                        </div>
-                        <img alt="image-photo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAADGCAMAAAAqo6adAAAAL
-            VBMVEXQ0NDw8PDd3d3r6+vg4ODk5OTb29vNzc3v7+/Y2NjT09Pn5+fS0tLj4+P09PR7pp5pAAADU0lEQVR4nO2cCZaCMBAFZZGw
-            KPc/7qjoqEg2yNLp/nWCrkrIqOTN6QQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhKDUOHTdMJ5U7kmy0E3VvNC0F3EJ2n6u3sz
-            TKKmAGr7sHwVaOQFUu7a/B2hyj5UKdd3Qv9HnHiwNm6v/QMYOGHT6VTVJOAN6rX41D7mHi4666vVFHAEm/Wquc48Xm9roXzXMTw
-            DVmP3nMfeEkdEf/gvMHwDDH7+FM+8HwPL4sz8AWvib6Xn7S9//ne38Y/4VYLT5t7knjIuy6HP/BqQmS4DcA8bG8gGI+eNv+wLA/
-            uO/ZQOwX37LCXDJPV0KtD+AcT/8n4w6fSmvQLYDiNE/nS7NxiHYidG/vwNZL/4k4uh7c7m+X4HO1TQIWvwXw7XpbzTnWt7r/wW1
-            kHsMAAAAAAAAAAAAAFAY/N8imlDdXAv+Te2mXwkOoB5XjMQGUM8bVkIDqP8LZiIDqI/7dQIDqK/rheICqNXtSmEB1vrCAqj691K
-            BoABb+oIC/G5+UQF0+kICbG9+MQFM+gIulpn12QfQP/siHgHb6jMP4KLP+BFw02cbwP7ssw7guvqPAPzOAB99hjvAT59dAF99+g
-            GUzzVwf33qZ4A6eyzQHn3aO+D+f7Gc59unTznA8m/BHOfbq083wG3zu8/n/rGnlAAvfaf59q8+1QBvfYf5julTDPCpb53vqD69A
-            N/6lvmO61MLsNY3zhdCn1aAX33DfGH0KQXY0tfOF0qfToBtfc184fSpBNDpb84XUp9GAL3+xnxh9SkEMOn/zBdaP38As/5qvvD6
-            uQPY9L/mi6GfN4Bd/2O+OPo5A7jo/88XSz9fADf953zx9HMFcNV/zBdTP08Ad/37fFH1cwTw0U9A6gDE9FMHIKefNgBB/ZQBSOq
-            nC0BUP1UAsvppAhDWTxGAtH78AMT1Ywcgrx83QAH6MQMUoR8vQCH6sQIUox8nQEH6MQIUpR8+QGH6oQMUpx82QIH6IQMUqR8uQK
-            H6oQIUqx8mQMH6IQIUrX88QOH6RwMUr38sAAP9IwFY6O8PwER/bwA2+vsCMNLfE4CVvn8AZvq+Adjpewbgp+8VoO0bhvSd+/5ni
-            fv+BwAAAAAAAAAAADNq2fwBVDxKltP2bpcAAAAASUVORK5CYII="/>
-                    </div>
-                </li>
-            </ul> 
-        </div>
-        <div class="vr mx-3 align-self-stretch"></div>
-        <div id="alcoholic">
-            <ul id="alcoholic-list">
-                <li class="pt-3">
-                    <div>
-                        <div class="d-flex">
-                            <p>drink name</p>
-                            <button> see more</button>
-                            <button> add to cart</button>
-                        </div>
-                        <img alt="image-photo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAADGCAMAAAAqo6adAAAAL
-            VBMVEXQ0NDw8PDd3d3r6+vg4ODk5OTb29vNzc3v7+/Y2NjT09Pn5+fS0tLj4+P09PR7pp5pAAADU0lEQVR4nO2cCZaCMBAFZZGw
-            KPc/7qjoqEg2yNLp/nWCrkrIqOTN6QQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhKDUOHTdMJ5U7kmy0E3VvNC0F3EJ2n6u3sz
-            TKKmAGr7sHwVaOQFUu7a/B2hyj5UKdd3Qv9HnHiwNm6v/QMYOGHT6VTVJOAN6rX41D7mHi4666vVFHAEm/Wquc48Xm9roXzXMTw
-            DVmP3nMfeEkdEf/gvMHwDDH7+FM+8HwPL4sz8AWvib6Xn7S9//ne38Y/4VYLT5t7knjIuy6HP/BqQmS4DcA8bG8gGI+eNv+wLA/
-            uO/ZQOwX37LCXDJPV0KtD+AcT/8n4w6fSmvQLYDiNE/nS7NxiHYidG/vwNZL/4k4uh7c7m+X4HO1TQIWvwXw7XpbzTnWt7r/wW1
-            kHsMAAAAAAAAAAAAAFAY/N8imlDdXAv+Te2mXwkOoB5XjMQGUM8bVkIDqP8LZiIDqI/7dQIDqK/rheICqNXtSmEB1vrCAqj691K
-            BoABb+oIC/G5+UQF0+kICbG9+MQFM+gIulpn12QfQP/siHgHb6jMP4KLP+BFw02cbwP7ssw7guvqPAPzOAB99hjvAT59dAF99+g
-            GUzzVwf33qZ4A6eyzQHn3aO+D+f7Gc59unTznA8m/BHOfbq083wG3zu8/n/rGnlAAvfaf59q8+1QBvfYf5julTDPCpb53vqD69A
-            N/6lvmO61MLsNY3zhdCn1aAX33DfGH0KQXY0tfOF0qfToBtfc184fSpBNDpb84XUp9GAL3+xnxh9SkEMOn/zBdaP38As/5qvvD6
-            uQPY9L/mi6GfN4Bd/2O+OPo5A7jo/88XSz9fADf953zx9HMFcNV/zBdTP08Ad/37fFH1cwTw0U9A6gDE9FMHIKefNgBB/ZQBSOq
-            nC0BUP1UAsvppAhDWTxGAtH78AMT1Ywcgrx83QAH6MQMUoR8vQCH6sQIUox8nQEH6MQIUpR8+QGH6oQMUpx82QIH6IQMUqR8uQK
-            H6oQIUqx8mQMH6IQIUrX88QOH6RwMUr38sAAP9IwFY6O8PwER/bwA2+vsCMNLfE4CVvn8AZvq+Adjpewbgp+8VoO0bhvSd+/5ni
-            fv+BwAAAAAAAAAAADNq2fwBVDxKltP2bpcAAAAASUVORK5CYII="/>
-                    </div>
-                </li>
-                <li class="pt-3">
-                    <div>
-                        <div class="d-flex">
-                            <p>drink name</p>
-                            <button> see more</button>
-                            <button> add to cart</button>
-                        </div>
-                        <img alt="image-photo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAADGCAMAAAAqo6adAAAAL
-            VBMVEXQ0NDw8PDd3d3r6+vg4ODk5OTb29vNzc3v7+/Y2NjT09Pn5+fS0tLj4+P09PR7pp5pAAADU0lEQVR4nO2cCZaCMBAFZZGw
-            KPc/7qjoqEg2yNLp/nWCrkrIqOTN6QQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhKDUOHTdMJ5U7kmy0E3VvNC0F3EJ2n6u3sz
-            TKKmAGr7sHwVaOQFUu7a/B2hyj5UKdd3Qv9HnHiwNm6v/QMYOGHT6VTVJOAN6rX41D7mHi4666vVFHAEm/Wquc48Xm9roXzXMTw
-            DVmP3nMfeEkdEf/gvMHwDDH7+FM+8HwPL4sz8AWvib6Xn7S9//ne38Y/4VYLT5t7knjIuy6HP/BqQmS4DcA8bG8gGI+eNv+wLA/
-            uO/ZQOwX37LCXDJPV0KtD+AcT/8n4w6fSmvQLYDiNE/nS7NxiHYidG/vwNZL/4k4uh7c7m+X4HO1TQIWvwXw7XpbzTnWt7r/wW1
-            kHsMAAAAAAAAAAAAAFAY/N8imlDdXAv+Te2mXwkOoB5XjMQGUM8bVkIDqP8LZiIDqI/7dQIDqK/rheICqNXtSmEB1vrCAqj691K
-            BoABb+oIC/G5+UQF0+kICbG9+MQFM+gIulpn12QfQP/siHgHb6jMP4KLP+BFw02cbwP7ssw7guvqPAPzOAB99hjvAT59dAF99+g
-            GUzzVwf33qZ4A6eyzQHn3aO+D+f7Gc59unTznA8m/BHOfbq083wG3zu8/n/rGnlAAvfaf59q8+1QBvfYf5julTDPCpb53vqD69A
-            N/6lvmO61MLsNY3zhdCn1aAX33DfGH0KQXY0tfOF0qfToBtfc184fSpBNDpb84XUp9GAL3+xnxh9SkEMOn/zBdaP38As/5qvvD6
-            uQPY9L/mi6GfN4Bd/2O+OPo5A7jo/88XSz9fADf953zx9HMFcNV/zBdTP08Ad/37fFH1cwTw0U9A6gDE9FMHIKefNgBB/ZQBSOq
-            nC0BUP1UAsvppAhDWTxGAtH78AMT1Ywcgrx83QAH6MQMUoR8vQCH6sQIUox8nQEH6MQIUpR8+QGH6oQMUpx82QIH6IQMUqR8uQK
-            H6oQIUqx8mQMH6IQIUrX88QOH6RwMUr38sAAP9IwFY6O8PwER/bwA2+vsCMNLfE4CVvn8AZvq+Adjpewbgp+8VoO0bhvSd+/5ni
-            fv+BwAAAAAAAAAAADNq2fwBVDxKltP2bpcAAAAASUVORK5CYII="/>
-                    </div>
-                </li>
-                <li class="pt-3">
-                    <div>
-                        <div class="d-flex">
-                            <p>drink name</p>
-                            <button> see more</button>
-                            <button> add to cart</button>
-                        </div>
-                        <img alt="image-photo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAADGCAMAAAAqo6adAAAAL
-            VBMVEXQ0NDw8PDd3d3r6+vg4ODk5OTb29vNzc3v7+/Y2NjT09Pn5+fS0tLj4+P09PR7pp5pAAADU0lEQVR4nO2cCZaCMBAFZZGw
-            KPc/7qjoqEg2yNLp/nWCrkrIqOTN6QQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhKDUOHTdMJ5U7kmy0E3VvNC0F3EJ2n6u3sz
-            TKKmAGr7sHwVaOQFUu7a/B2hyj5UKdd3Qv9HnHiwNm6v/QMYOGHT6VTVJOAN6rX41D7mHi4666vVFHAEm/Wquc48Xm9roXzXMTw
-            DVmP3nMfeEkdEf/gvMHwDDH7+FM+8HwPL4sz8AWvib6Xn7S9//ne38Y/4VYLT5t7knjIuy6HP/BqQmS4DcA8bG8gGI+eNv+wLA/
-            uO/ZQOwX37LCXDJPV0KtD+AcT/8n4w6fSmvQLYDiNE/nS7NxiHYidG/vwNZL/4k4uh7c7m+X4HO1TQIWvwXw7XpbzTnWt7r/wW1
-            kHsMAAAAAAAAAAAAAFAY/N8imlDdXAv+Te2mXwkOoB5XjMQGUM8bVkIDqP8LZiIDqI/7dQIDqK/rheICqNXtSmEB1vrCAqj691K
-            BoABb+oIC/G5+UQF0+kICbG9+MQFM+gIulpn12QfQP/siHgHb6jMP4KLP+BFw02cbwP7ssw7guvqPAPzOAB99hjvAT59dAF99+g
-            GUzzVwf33qZ4A6eyzQHn3aO+D+f7Gc59unTznA8m/BHOfbq083wG3zu8/n/rGnlAAvfaf59q8+1QBvfYf5julTDPCpb53vqD69A
-            N/6lvmO61MLsNY3zhdCn1aAX33DfGH0KQXY0tfOF0qfToBtfc184fSpBNDpb84XUp9GAL3+xnxh9SkEMOn/zBdaP38As/5qvvD6
-            uQPY9L/mi6GfN4Bd/2O+OPo5A7jo/88XSz9fADf953zx9HMFcNV/zBdTP08Ad/37fFH1cwTw0U9A6gDE9FMHIKefNgBB/ZQBSOq
-            nC0BUP1UAsvppAhDWTxGAtH78AMT1Ywcgrx83QAH6MQMUoR8vQCH6sQIUox8nQEH6MQIUpR8+QGH6oQMUpx82QIH6IQMUqR8uQK
-            H6oQIUqx8mQMH6IQIUrX88QOH6RwMUr38sAAP9IwFY6O8PwER/bwA2+vsCMNLfE4CVvn8AZvq+Adjpewbgp+8VoO0bhvSd+/5ni
-            fv+BwAAAAAAAAAAADNq2fwBVDxKltP2bpcAAAAASUVORK5CYII="/>
-                    </div>
-                </li>
-            </ul> 
-        </div>
-    </div>
+    
+    @if (_drinksList != null)
+    {
+        <div class="d-flex align-items-stretch justify-content-around">
+            <div id="non-alcoholic">
+                <div>
+                    <h2 class="border border-black">Non Alcoholic</h2>
+                </div>
+                <ul id="non-alcoholic-list" class="list-unstyled">
+                    @if (_drinksList.NonAlcoholicDrinks.Any())
+                    {
+                        @foreach (Drink drink in _drinksList.NonAlcoholicDrinks)
+                        {
+                            <li class="pt-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <button id="@drink.Id">See more</button>
+                                        <p class="card-title">@drink.Name</p>
+                                        <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="vr mx-3 align-self-stretch"></div>
+            <div id="alcoholic">
+                <div>
+                    <h2 class="border border-black">Alcoholic</h2>
+                </div>
+                <ul id="alcoholic-list" class="list-unstyled">
+                    @if (_drinksList.AlcoholicDrinks.Any())
+                    {
+                        @foreach (Drink drink in _drinksList.AlcoholicDrinks)
+                        {
+                            <li class="pt-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <button id="@drink.Id" @onclick="GenerateModel"></button>
+                                        <p class="card-title">@drink.Name</p>
+                                        <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
 
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    }
 </div>
 
 
@@ -189,14 +90,31 @@
 
 <div id="notLoggedIn" class="d-none">
     <div class=".d-flex visible justify-content-center align-content-center">
-    <h1 class="text-center">Login</h1>
-    <p class="text-center">Username:</p>
-    <div class="d-flex justify-content-center align-content: center pb-4">
-        <input class="border border-black" type="text" placeholder="enter username"/>
-    </div>
-    <p class="text-center">Password:</p>
-    <div class="d-flex justify-content-center align-content: center pb-4">
-        <input class="border border-black" type="text" placeholder="enter username"/>
-    </div>
+        <h1 class="text-center">Login</h1>
+        <p class="text-center">Username:</p>
+        <div class="d-flex justify-content-center align-content: center pb-4">
+            <input class="border border-black" type="text" placeholder="enter username"/>
+        </div>
+        <p class="text-center">Password:</p>
+        <div class="d-flex justify-content-center align-content: center pb-4">
+            <input class="border border-black" type="text" placeholder="enter username"/>
+        </div>
     </div>
 </div>
+
+
+@code {
+    private HomepageDrinkLists? _drinksList = new HomepageDrinkLists();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _drinksList = await CocktailDbService.GetHomepageDrinksAsync() ?? new HomepageDrinkLists();
+    }
+
+    private void GenerateModel()
+    {
+        
+    }
+    
+
+}

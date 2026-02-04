@@ -43,7 +43,7 @@ public class CocktailDbService : ICocktailProvider
             {
                 var drink = new Drink();
                 drink.Name = alcoholicDrink["strDrink"]?.ToString() ?? string.Empty;
-                drink.DrinkThumbnailUrl = alcoholicDrink["strDrinkThumbnail"]?.ToString() ?? string.Empty;
+                drink.DrinkThumbnailUrl = alcoholicDrink["strDrinkThumb"]?.ToString() ?? string.Empty;
                 drink.Id = int.Parse(alcoholicDrink["idDrink"]?.ToString() ?? "-1");
                 homepageDrinks.AlcoholicDrinks.Add(drink);
             }
@@ -52,7 +52,7 @@ public class CocktailDbService : ICocktailProvider
             {
                 var drink = new Drink();
                 drink.Name = nonAlcoholicDrink["strDrink"]?.ToString() ?? string.Empty;
-                drink.DrinkThumbnailUrl = nonAlcoholicDrink["strDrinkThumbnail"]?.ToString() ?? string.Empty;
+                drink.DrinkThumbnailUrl = nonAlcoholicDrink["strDrinkThumb"]?.ToString() ?? string.Empty;
                 drink.Id = int.Parse(nonAlcoholicDrink["idDrink"]?.ToString() ?? "-1");
                 homepageDrinks.NonAlcoholicDrinks.Add(drink);
             }
