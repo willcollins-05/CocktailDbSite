@@ -97,8 +97,32 @@
                     <p id="category">@category</p>
                     <p id="glassType">@glassType</p>
                     <p id="instructions">@instructions</p>
-                    <p id="Ingredients">@Ingredients</p>
-                    <p id="Measurements">@Measurements</p>
+                    <div class="d-flex justify-content-around">
+                        <div>
+                            @if (Ingredients != null && Ingredients.Any())
+                            {
+                                <p>Ingredients</p>
+                                <ul>
+                                    @foreach (var ingredient in Ingredients)
+                                    {
+                                        <li>@ingredient</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                        <div>
+                            @if (Measurements != null && Measurements.Any())
+                            {
+                                <p>Measurements</p>
+                                <ul class="list-unstyled">
+                                    @foreach (var measurement in Measurements)
+                                    {
+                                        <li>@measurement.Amount @measurement.Unit</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
                 </div>
                 
             </div>
@@ -149,7 +173,7 @@
 
     private async Task GenerateModal(int id)
     {
-        
+
         Drink drink = await findDrinkById(id);
 
 
