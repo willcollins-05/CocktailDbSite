@@ -47,7 +47,7 @@
                             <li class="pt-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <button id="@drink.Id">See more</button>
+                                        <button @onclick="() => GenerateModal(drink.Id)">See More</button>
                                         <p class="card-title">@drink.Name</p>
                                         <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
                                     </div>
@@ -70,10 +70,9 @@
                             <li class="pt-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <button id="@drink.Id" @onclick="GenerateModel"></button>
+                                        <button @onclick="() =>GenerateModal(drink.Id)">See More</button>
                                         <p class="card-title">@drink.Name</p>
                                         <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
-
                                     </div>
                                 </div>
                             </li>
@@ -84,6 +83,28 @@
         </div>
     }
 </div>
+@if (_modalVisible)
+{
+    <div  id="modal" class="modal d-block">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">@drinkName Info</h3>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="drinkName">@drinkName</p>
+                    <p id="category">@category</p>
+                    <p id="glassType">@glassType</p>
+                    <p id="instructions">@instructions</p>
+                    <p id="Ingredients">@Ingredients</p>
+                    <p id="Measurements">@Measurements</p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+}
 
 
 
@@ -104,6 +125,14 @@
 
 
 @code {
+
+    private bool _modalVisible = false;
+    string drinkName;
+    string category;
+    string glassType;
+    string instructions;
+    List<string> Ingredients;
+    List<Measurement> Measurements;
     private HomepageDrinkLists? _drinksList = new HomepageDrinkLists();
 
     protected override async Task OnInitializedAsync()
@@ -111,9 +140,33 @@
         _drinksList = await CocktailDbService.GetHomepageDrinksAsync() ?? new HomepageDrinkLists();
     }
 
-    private void GenerateModel()
+    private async Task<Drink> findDrinkById(int id)
+    { 
+        
+        Drink drink = await CocktailDbService.GetDrinkById(id);
+        return drink;
+    }
+
+    private async Task GenerateModal(int id)
     {
         
+        Drink drink = await findDrinkById(id);
+
+
+        drinkName = drink.Name;
+        category = drink.Category;
+        glassType = drink.Glass;
+        instructions = drink.Instructions;
+        Ingredients = drink.Ingredients;
+        Measurements = drink.Measurements;
+        _modalVisible = true;
+        StateHasChanged();
+    }
+
+    private void CloseModal()
+    {
+        _modalVisible = false;
+        StateHasChanged();
     }
     
 
