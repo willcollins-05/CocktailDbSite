@@ -25,8 +25,8 @@
 
 <div id="loggedIn" >
     <div class="d-flex justify-content-around">
-        <input type="text" placeholder="Search" class="border border-black w-50"/>
-        <button class=".bg-dark border-radius text-black w-25">Filter</button>
+        <input @bind-value="_searchQuery" type="text" placeholder="Search" class="border border-black w-50"/>
+        <button class=".bg-dark border-radius text-black w-25" @onclick="SearchDrinks">Search</button>
 
     </div>
     
@@ -84,6 +84,7 @@
         </div>
     }
 </div>
+
 @if (_modalVisible)
 {
     <div  id="modal" class="modal d-block">
@@ -94,34 +95,41 @@
                     <button type="button" class="btn-close" @onclick="CloseModal"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="drinkName">@drinkName</p>
-                    <p id="category">@category</p>
-                    <p id="glassType">@glassType</p>
-                    <p id="instructions">@instructions</p>
-                    <div class="d-flex justify-content-around">
+                    <div class="d-flex">  
                         <div>
-                            @if (Ingredients != null && Ingredients.Any())
-                            {
-                                <p>Ingredients</p>
-                                <ul>
-                                    @foreach (var ingredient in Ingredients)
-                                    {
-                                        <li>@ingredient</li>
-                                    }
-                                </ul>
-                            }
+                            <img alt="drink-image" src="@drinkImage"/>
                         </div>
                         <div>
-                            @if (Measurements != null && Measurements.Any())
-                            {
-                                <p>Measurements</p>
-                                <ul class="list-unstyled">
-                                    @foreach (var measurement in Measurements)
+                            <p id="drinkName">@drinkName</p>
+                            <p id="category">@category</p>
+                            <p id="glassType">@glassType</p>
+                            <p id="instructions">@instructions</p>
+                            <div id="ingredientMeasurement"class="d-flex justify-content-around">
+                                <div>
+                                    @if (Ingredients != null && Ingredients.Any())
                                     {
-                                        <li>@measurement.Amount @measurement.Unit</li>
+                                        <p>Ingredients</p>
+                                        <ul>
+                                            @foreach (var ingredient in Ingredients)
+                                            {
+                                                <li>@ingredient</li>
+                                            }
+                                        </ul>
                                     }
-                                </ul>
-                            }
+                                </div>
+                                <div>
+                                    @if (Measurements != null && Measurements.Any())
+                                    {
+                                        <p>Measurements</p>
+                                        <ul class="list-unstyled">
+                                            @foreach (var measurement in Measurements)
+                                            {
+                                                <li>@measurement.Amount @measurement.Unit</li>
+                                            }
+                                        </ul>
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -158,7 +166,19 @@
     string instructions;
     List<string> Ingredients;
     List<Measurement> Measurements;
+    string drinkImage;
     private HomepageDrinkLists? _drinksList = new HomepageDrinkLists();
+    private string _searchQuery = string.Empty;
+
+    private async Task SearchDrinks()
+    {
+        if (string.IsNullOrWhiteSpace(_searchQuery))
+        {
+            _drinksList = await CocktailDbService.GetHomepageDrinksAsync();
+            return;
+        }
+        _drinksList = await CocktailDbService.GetHomepageDrinksFromSearchAsync(_searchQuery);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -184,6 +204,7 @@
         instructions = drink.Instructions;
         Ingredients = drink.Ingredients;
         Measurements = drink.Measurements;
+        drinkImage = drink.DrinkThumbnailUrl;
         _modalVisible = true;
         StateHasChanged();
     }
