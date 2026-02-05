@@ -1,58 +1,80 @@
 ﻿@page "/weather"
 @attribute [StreamRendering]
+@using System.Net
 @using CocktailDbSite.Application.Services
 @using CocktailDbSite.Domain.Models
 @using CocktailDbSite.Domain.Models.DrinkModels
 @using CocktailDbSite.Domain.Models.WebpageModels
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc
 @rendermode InteractiveServer
 @inject CocktailDbService CocktailDbService
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 <PageTitle>Weather</PageTitle>
 
-<div>
-    <h1>Test Table Values</h1>
-    @if(_drinksList != null)
-    {
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    @if (_drinksList.AlcoholicDrinks.Any())
-                    {
-                        @foreach (Drink drink in _drinksList.AlcoholicDrinks)
-                        {
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">@drink.Name</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
-                                </div>
-                            </div>
-                        }
-                    }
+<AuthorizeView>
+    <NotAuthorized>
+        <p>Please Log In</p>
+        <NavLink href="/login">Login</NavLink>
+    </NotAuthorized>
+    <Authorized>
+        <p>Logged in @context.User.Identity?.Name</p>
+        <div>
+            <h1>Test Table Values</h1>
+            @if (_drinksList != null)
+            {
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            @if (_drinksList.AlcoholicDrinks.Any())
+                            {
+                                @foreach (Drink drink in _drinksList.AlcoholicDrinks)
+                                {
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@drink.Name</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            @if (_drinksList.NonAlcoholicDrinks.Any())
+                            {
+                                @foreach (Drink drink in _drinksList.NonAlcoholicDrinks)
+                                {
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@drink.Name</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    @if (_drinksList.NonAlcoholicDrinks.Any())
-                    {
-                        @foreach (Drink drink in _drinksList.NonAlcoholicDrinks)
-                        {
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">@drink.Name</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
-                                </div>
-                            </div>
-                        }
-                    }
-                </div>
-            </div>
+
+            }
+            <button class="btn btn-primary" @onclick="LoadTestTables">Load the test table</button>
+            <button class="btn btn-primary" @onclick="Logout">Logout</button>
         </div>
-        
-    }
-    <button class="btn btn-primary" @onclick="LoadTestTables">Load the test table</button>
-</div>
+    </Authorized>
+    
+</AuthorizeView>
+
 
 
 @code {
     private HomepageDrinkLists? _drinksList = new HomepageDrinkLists();
+
+    private async Task Logout()
+    {
+        NavigationManager.NavigateTo("connect/logout", forceLoad: true);
+    }
     
     private async Task LoadTestTables()
     {

@@ -12,11 +12,12 @@ the data. User data and related information is stored in a database hosted on
 ## Running the project locally
 ___
 ### Environment Variables
-Set up the user secrets in the CocktailDbSite.Infrastructure by doing the following in the terminal.
+Set up the user secrets in the CocktailDbSite.Client by doing the following in the terminal (Do not
+include the curly braces in the string).
 ```
 cd CocktailDbSite.Client
 dotnet user-secrets init
-dotnet user-secrets set "CONNECTION_STRING" "{YOUR CONNECTION STRING HERE}"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "{YOUR CONNECTION STRING HERE}"
 ```
 Doing this creates a secrets.json file that will secure your personal connection string,
 keeping it out of version control. 
@@ -26,3 +27,7 @@ still in the CocktailDbSite.Client project in the terminal
 ```
 dotnet user-secrets list
 ```
+
+### Running the application
+To run the application, you must use the `CocktailDbSite.Client: https` for all the authentication features
+to work properly. 
