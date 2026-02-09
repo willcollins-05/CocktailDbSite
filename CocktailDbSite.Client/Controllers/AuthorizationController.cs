@@ -87,6 +87,13 @@ public class AuthorizationController : Controller
         });
     }
 
+    [HttpPost("~/connect/logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return Redirect("/");
+    }
+    
     private static IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)
     {
         // Note: by default, claims are NOT automatically included in the access and identity tokens.

@@ -1,10 +1,12 @@
-﻿using CocktailDbSite.Domain.Models;
+﻿using CocktailDbSite.Domain.Identity;
+using CocktailDbSite.Domain.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace CocktailDbSite.Infrastructure.Data;
 
-public class CocktailDbContext : DbContext
+public class CocktailDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
     private readonly IConfiguration _configuration;
     
@@ -14,6 +16,12 @@ public class CocktailDbContext : DbContext
     
     // DbSet<T>
     public DbSet<TestTable> TestTables { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<ApplicationRole>();
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

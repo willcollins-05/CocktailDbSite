@@ -15,7 +15,7 @@
 @* You can have an AuthorizeView accept multiple roles using a comma to separate the roles
     FOR EXAMPLE: <AuthorizeView Roles="Admin, User">
 *@
-<AuthorizeView Roles="Admin">
+<AuthorizeView>
     <NotAuthorized>
         <RedirectToAccessDeniedComponent />
     </NotAuthorized>
@@ -59,8 +59,7 @@
                 </div>
 
             }
-            <button class="btn btn-primary" @onclick="LoadTestTables">Load the test table</button>
-            <button class="btn btn-primary" @onclick="Logout">Logout</button>
+            <LogoutButton />
         </div>
     </Authorized>
     
@@ -70,11 +69,6 @@
 
 @code {
     private HomepageDrinkLists? _drinksList = new HomepageDrinkLists();
-
-    private async Task Logout()
-    {
-        NavigationManager.NavigateTo("connect/logout", forceLoad: true);
-    }
     
     private async Task LoadTestTables()
     {
