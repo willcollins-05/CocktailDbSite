@@ -1,54 +1,70 @@
 ﻿@page "/weather"
 @attribute [StreamRendering]
+@using System.Net
 @using CocktailDbSite.Application.Services
+@using CocktailDbSite.Client.Components.Account
 @using CocktailDbSite.Domain.Models
-@using CocktailDbSite.Domain.Models.DrinkModels
 @using CocktailDbSite.Domain.Models.WebpageModels
 @rendermode InteractiveServer
 @inject CocktailDbService CocktailDbService
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 <PageTitle>Weather</PageTitle>
 
-<div>
-    <h1>Test Table Values</h1>
-    @if(_drinksList != null)
-    {
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    @if (_drinksList.AlcoholicDrinks.Any())
-                    {
-                        @foreach (Drink drink in _drinksList.AlcoholicDrinks)
-                        {
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">@drink.Name</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
-                                </div>
-                            </div>
-                        }
-                    }
+@* You can have an AuthorizeView accept multiple roles using a comma to separate the roles
+    FOR EXAMPLE: <AuthorizeView Roles="Admin, User">
+*@
+<AuthorizeView>
+    <NotAuthorized>
+        <RedirectToAccessDeniedComponent />
+    </NotAuthorized>
+    <Authorized>
+        <p>Logged in @context.User.Identity?.Name</p>
+        <div>
+            <h1>Test Table Values</h1>
+            @if (_drinksList != null)
+            {
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            @if (_drinksList.AlcoholicDrinks.Any())
+                            {
+                                @foreach (Drink drink in _drinksList.AlcoholicDrinks)
+                                {
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@drink.Name</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            @if (_drinksList.NonAlcoholicDrinks.Any())
+                            {
+                                @foreach (Drink drink in _drinksList.NonAlcoholicDrinks)
+                                {
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@drink.Name</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    @if (_drinksList.NonAlcoholicDrinks.Any())
-                    {
-                        @foreach (Drink drink in _drinksList.NonAlcoholicDrinks)
-                        {
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">@drink.Name</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">@drink.Id</h6>
-                                </div>
-                            </div>
-                        }
-                    }
-                </div>
-            </div>
+
+            }
+            <LogoutButton />
         </div>
-        
-    }
-    <button class="btn btn-primary" @onclick="LoadTestTables">Load the test table</button>
-</div>
+    </Authorized>
+    
+</AuthorizeView>
+
 
 
 @code {
@@ -60,20 +76,5 @@
         var drinkById = await CocktailDbService.GetDrinkById(11007);
         var drinksByName = await CocktailDbService.GetDrinksByName("Margarita");
         Console.WriteLine(drinkById?.ToString() ?? string.Empty);
-        if (drinksByName != null)
-        {
-            foreach (Drink drink in drinksByName)
-            {
-                Console.WriteLine(drink.ToString());   
-            }
-        }
-
-        if (drinkById != null && drinkById.Measurements.Any())
-        {
-            foreach (Measurement measurement in drinkById.Measurements)
-            {
-                Console.WriteLine(measurement.ToString());
-            }
-        }
     }
 }

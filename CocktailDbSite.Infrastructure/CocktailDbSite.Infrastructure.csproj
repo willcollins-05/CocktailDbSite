@@ -12,6 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
         <PrivateAssets>all</PrivateAssets>
@@ -20,6 +22,10 @@
       <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.2" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+      <PackageReference Include="OpenIddict" Version="7.2.0" />
+      <PackageReference Include="OpenIddict.Abstractions" Version="7.2.0" />
+      <PackageReference Include="OpenIddict.Server" Version="7.2.0" />
+      <PackageReference Include="OpenIddict.Server.AspNetCore" Version="7.2.0" />
     </ItemGroup>
 
 </Project>
