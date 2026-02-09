@@ -1,6 +1,8 @@
-﻿namespace CocktailDbSite.Domain.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class ApplicationUser
+namespace CocktailDbSite.Domain.Identity;
+
+public class ApplicationUser : IdentityUser
 {
     
 }

@@ -1,4 +1,5 @@
-﻿using CocktailDbSite.Domain.Interfaces;
+﻿using CocktailDbSite.Domain.Identity;
+using CocktailDbSite.Domain.Interfaces;
 using CocktailDbSite.Domain.Services;
 using CocktailDbSite.Infrastructure.Data;
 using CocktailDbSite.Infrastructure.Repositories;
