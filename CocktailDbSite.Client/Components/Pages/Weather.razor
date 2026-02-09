@@ -2,6 +2,7 @@
 @attribute [StreamRendering]
 @using System.Net
 @using CocktailDbSite.Application.Services
+@using CocktailDbSite.Client.Components.Account
 @using CocktailDbSite.Domain.Models
 @using CocktailDbSite.Domain.Models.DrinkModels
 @using CocktailDbSite.Domain.Models.WebpageModels
@@ -14,10 +15,12 @@
 
 <PageTitle>Weather</PageTitle>
 
-<AuthorizeView>
+@* You can have an AuthorizeView accept multiple roles using a comma to separate the roles
+    FOR EXAMPLE: <AuthorizeView Roles="Admin, User">
+*@
+<AuthorizeView Roles="Admin">
     <NotAuthorized>
-        <p>Please Log In</p>
-        <NavLink href="/login">Login</NavLink>
+        <RedirectToAccessDeniedComponent />
     </NotAuthorized>
     <Authorized>
         <p>Logged in @context.User.Identity?.Name</p>
@@ -82,20 +85,5 @@
         var drinkById = await CocktailDbService.GetDrinkById(11007);
         var drinksByName = await CocktailDbService.GetDrinksByName("Margarita");
         Console.WriteLine(drinkById?.ToString() ?? string.Empty);
-        if (drinksByName != null)
-        {
-            foreach (Drink drink in drinksByName)
-            {
-                Console.WriteLine(drink.ToString());   
-            }
-        }
-
-        if (drinkById != null && drinkById.Measurements.Any())
-        {
-            foreach (Measurement measurement in drinkById.Measurements)
-            {
-                Console.WriteLine(measurement.ToString());
-            }
-        }
     }
 }

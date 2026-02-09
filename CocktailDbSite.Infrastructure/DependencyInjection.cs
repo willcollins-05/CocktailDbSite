@@ -23,16 +23,17 @@ public static class DependencyInjection
         });
 
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-        {
-            options.SignIn.RequireConfirmedAccount = false;
-            options.Password.RequireDigit = false;
-            options.Password.RequiredLength = 6;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireUppercase = false; 
-            options.Password.RequireLowercase = false;
-        })
-        .AddEntityFrameworkStores<CocktailDbContext>()
-        .AddDefaultTokenProviders();
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
+            .AddEntityFrameworkStores<CocktailDbContext>()
+            .AddDefaultTokenProviders()
+            .AddRoles<ApplicationRole>();
 
         services.AddOpenIddict()
             .AddCore(options =>
@@ -43,7 +44,8 @@ public static class DependencyInjection
             .AddServer(options =>
             {
                 options.SetTokenEndpointUris("/connect/token");
-                options.AllowPasswordFlow();
+                options.AllowPasswordFlow()
+                    .AllowRefreshTokenFlow();
                 options.AcceptAnonymousClients(); 
                 options.AddDevelopmentEncryptionCertificate()
                        .AddDevelopmentSigningCertificate();
@@ -54,6 +56,13 @@ public static class DependencyInjection
                 options.SetAuthorizationEndpointUris("/connect/authorize")
                     .SetTokenEndpointUris("/connect/token")
                     .SetEndSessionEndpointUris("/connect/logout");
+
+                options.RegisterScopes(
+                    OpenIddictConstants.Scopes.OpenId,
+                    OpenIddictConstants.Scopes.Email,
+                    OpenIddictConstants.Scopes.Profile,
+                    OpenIddictConstants.Scopes.Roles,
+                    OpenIddictConstants.Scopes.OfflineAccess);
             })
             .AddValidation(options =>
             {

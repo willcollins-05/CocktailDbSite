@@ -1,9 +1,10 @@
 using CocktailDbSite.Application;
 using CocktailDbSite.Client.Components;
+using CocktailDbSite.Domain.Identity;
 using CocktailDbSite.Infrastructure;
 using Microsoft.AspNetCore.Identity;
-using CocktailDbSite.Domain.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using OpenIddict.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorization();
 
@@ -46,6 +48,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.MapRazorPages();
+app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -57,6 +60,32 @@ using (var scope = app.Services.CreateScope())
         {
             await roleManager.CreateAsync(new ApplicationRole { Name = role });
         }
+    }
+
+    var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+
+    if (await manager.FindByClientIdAsync("cocktail-db-app") is null)
+    {
+        await manager.CreateAsync(new OpenIddictApplicationDescriptor()
+        {
+            ClientId = "cocktail-db-app",
+            ClientSecret = config["AuthClientSecret"],
+            DisplayName = "Cocktail DB Authorization Application",
+            Permissions =
+            {
+                OpenIddictConstants.Permissions.Endpoints.Token,
+                
+                OpenIddictConstants.Permissions.GrantTypes.Password,
+                OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
+                
+                OpenIddictConstants.Permissions.Scopes.Email,
+                OpenIddictConstants.Permissions.Scopes.Profile,
+                OpenIddictConstants.Permissions.Scopes.Roles,
+                "scp:offline_access",
+                
+                OpenIddictConstants.Permissions.ResponseTypes.Code
+            }
+        });
     }
 }
 
