@@ -97,7 +97,7 @@
                 <div class="modal-body">
                     <div class="d-flex">  
                         <div>
-                            <img alt="drink-image" src="@drinkImage"/>
+                            <img id="drinkImage" alt="drink-image" src="@drinkImage"/>
                         </div>
                         <div>
                             <p id="drinkName">@drinkName</p>
@@ -133,14 +133,10 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>
 }
-
-
-
 
 <div id="notLoggedIn" class="d-none">
     <div class=".d-flex visible justify-content-center align-content-center">
@@ -178,6 +174,8 @@
             return;
         }
         _drinksList = await CocktailDbService.GetHomepageDrinksFromSearchAsync(_searchQuery);
+        StateHasChanged();
+
     }
 
     protected override async Task OnInitializedAsync()
@@ -185,7 +183,7 @@
         _drinksList = await CocktailDbService.GetHomepageDrinksAsync() ?? new HomepageDrinkLists();
     }
 
-    private async Task<Drink> findDrinkById(int id)
+    private async Task<Drink> FindDrinkById(int id)
     { 
         
         Drink drink = await CocktailDbService.GetDrinkById(id);
@@ -195,18 +193,18 @@
     private async Task GenerateModal(int id)
     {
 
-        Drink drink = await findDrinkById(id);
+        Drink drink = await FindDrinkById(id);
 
-
+        drinkImage = drink.DrinkThumbnailUrl;
         drinkName = drink.Name;
         category = drink.Category;
         glassType = drink.Glass;
         instructions = drink.Instructions;
         Ingredients = drink.Ingredients;
         Measurements = drink.Measurements;
-        drinkImage = drink.DrinkThumbnailUrl;
+        
         _modalVisible = true;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
     private void CloseModal()
