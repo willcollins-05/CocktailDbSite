@@ -82,20 +82,6 @@
         var drinkById = await CocktailDbService.GetDrinkById(11007);
         var drinksByName = await CocktailDbService.GetDrinksByName("Margarita");
         Console.WriteLine(drinkById?.ToString() ?? string.Empty);
-        if (drinksByName != null)
-        {
-            foreach (Drink drink in drinksByName)
-            {
-                Console.WriteLine(drink.ToString());   
-            }
-        }
-
-        if (drinkById != null && drinkById.Measurements.Any())
-        {
-            foreach (Measurement measurement in drinkById.Measurements)
-            {
-                Console.WriteLine(measurement.ToString());
-            }
-        }
+        
     }
 }

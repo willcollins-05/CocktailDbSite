@@ -9,7 +9,6 @@
 
 <PageTitle>Cocktail Bar</PageTitle>
 
-
 <div class="header">
     <img class="container max-height: 100px;" alt="cocktails" src="https://advancedmixology.com/cdn/shop/articles/Five_kinds_of_classic_cocktails.jpg?v=1631787354&width=800"/>
     <div class="d-flex justify-content-around pt-3">
@@ -31,7 +30,6 @@
     </div>
     
     <hr/>
-    
     
     @if (_drinksList != null)
     {
@@ -95,43 +93,39 @@
                     <button type="button" class="btn-close" @onclick="CloseModal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="d-flex">  
+                    <img alt="drink image" src="@drinkThumb"/>
+                    <p id="drinkName">@drinkName</p>
+                    <p id="category">@category</p>
+                    <p id="glassType">@glassType</p>
+                    <p id="instructions">@instructions</p>
+                    <div id="ingredientMeasurement"class="d-flex justify-content-around">
                         <div>
-                            <img id="drinkImage" alt="drink-image" src="@drinkImage"/>
+                            @if (Ingredients != null && Ingredients.Any())
+                            {
+                                <p>Ingredients</p>
+                                <ul>
+                                    @foreach (var ingredient in Ingredients)
+                                    {
+                                        <li>@ingredient</li>
+                                    }
+                                </ul>
+                            }
                         </div>
                         <div>
-                            <p id="drinkName">@drinkName</p>
-                            <p id="category">@category</p>
-                            <p id="glassType">@glassType</p>
-                            <p id="instructions">@instructions</p>
-                            <div id="ingredientMeasurement"class="d-flex justify-content-around">
-                                <div>
-                                    @if (Ingredients != null && Ingredients.Any())
+                            @if (Measurements != null && Measurements.Any())
+                            {
+                                <p>Measurements</p>
+                                <ul class="list-unstyled">
+                                    @foreach (var measurement in Measurements)
                                     {
-                                        <p>Ingredients</p>
-                                        <ul>
-                                            @foreach (var ingredient in Ingredients)
-                                            {
-                                                <li>@ingredient</li>
-                                            }
-                                        </ul>
+                                        <li>@measurement.Amount @measurement.Unit</li>
                                     }
-                                </div>
-                                <div>
-                                    @if (Measurements != null && Measurements.Any())
-                                    {
-                                        <p>Measurements</p>
-                                        <ul class="list-unstyled">
-                                            @foreach (var measurement in Measurements)
-                                            {
-                                                <li>@measurement.Amount @measurement.Unit</li>
-                                            }
-                                        </ul>
-                                    }
-                                </div>
-                            </div>
+                                </ul>
+                            }
                         </div>
                     </div>
+
+
                 </div>
             </div>
         </div>
@@ -152,19 +146,19 @@
     </div>
 </div>
 
-
 @code {
 
     private bool _modalVisible = false;
-    string drinkName;
-    string category;
-    string glassType;
-    string instructions;
-    List<string> Ingredients;
-    List<Measurement> Measurements;
-    string drinkImage;
+    private bool _modalLoaded = false;
+    private string drinkName = "";
+    private string category = "";
+    private string glassType = "";
+    private string instructions = "";
+    private List<string> Ingredients = new List<string>();
+    private List<Measurement> Measurements = new List<Measurement>();
     private HomepageDrinkLists? _drinksList = new HomepageDrinkLists();
     private string _searchQuery = string.Empty;
+    private string drinkThumb;
 
     private async Task SearchDrinks()
     {
@@ -173,7 +167,8 @@
             _drinksList = await CocktailDbService.GetHomepageDrinksAsync();
             return;
         }
-        _drinksList = await CocktailDbService.GetHomepageDrinksFromSearchAsync(_searchQuery);
+
+        _drinksList = await CocktailDbService.GetDrinksByName(_searchQuery);
         StateHasChanged();
 
     }
@@ -184,27 +179,28 @@
     }
 
     private async Task<Drink> FindDrinkById(int id)
-    { 
-        
+    {
+
         Drink drink = await CocktailDbService.GetDrinkById(id);
         return drink;
     }
 
     private async Task GenerateModal(int id)
     {
+        _modalLoaded = false;
+        
 
         Drink drink = await FindDrinkById(id);
-
-        drinkImage = drink.DrinkThumbnailUrl;
         drinkName = drink.Name;
         category = drink.Category;
         glassType = drink.Glass;
         instructions = drink.Instructions;
         Ingredients = drink.Ingredients;
         Measurements = drink.Measurements;
-        
+        drinkThumb = drink.DrinkThumbnailUrl;
+
         _modalVisible = true;
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
     }
 
     private void CloseModal()
@@ -212,6 +208,5 @@
         _modalVisible = false;
         StateHasChanged();
     }
-    
 
 }
