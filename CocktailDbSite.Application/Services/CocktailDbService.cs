@@ -23,8 +23,33 @@ public class CocktailDbService
         return await _cocktailApi.GetDrinkById(id);
     }
 
-    public async Task<List<Drink>?> GetDrinksByName(string name)
+    public async Task<HomepageDrinkLists> GetDrinksByName(string name)
     {
-        return await _cocktailApi.GetDrinksByName(name);
+        List<Drink>? drinks = await _cocktailApi.GetDrinksByName(name);
+
+
+        Console.WriteLine($"find {name} amount = {drinks?.Count ?? 0} ");
+        if (drinks != null)
+        {
+            foreach (Drink drink in drinks)
+            {
+                Console.WriteLine($"{drink.Name} , is alchoholic {drink.IsAlcoholic}");
+            }
+        }
+        
+        
+        
+        HomepageDrinkLists homepageDrinkLists = new HomepageDrinkLists();
+
+        if (drinks != null)
+        {
+            homepageDrinkLists.AlcoholicDrinks = drinks!.Where(d => d.IsAlcoholic).ToList();
+            homepageDrinkLists.NonAlcoholicDrinks = drinks!.Where(d => !d.IsAlcoholic).ToList();
+        }
+
+        
+        
+        return homepageDrinkLists;
     }
+    
 }
