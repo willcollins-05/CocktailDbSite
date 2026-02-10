@@ -28,7 +28,7 @@ public class CocktailDbService
         List<Drink>? drinks = await _cocktailApi.GetDrinksByName(name);
 
 
-        Console.WriteLine($"find {name} amount = {drinks?.Count ?? 0} ");
+       
         if (drinks != null)
         {
             foreach (Drink drink in drinks)
