@@ -1,5 +1,6 @@
 ﻿using CocktailDbSite.Domain.Identity;
 using CocktailDbSite.Domain.Models;
+using CocktailDbSite.Domain.Models.UserLists;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,16 +11,18 @@ public class CocktailDbContext : IdentityDbContext<ApplicationUser, ApplicationR
 {
     private readonly IConfiguration _configuration;
     
-    public CocktailDbContext(DbContextOptions options) : base(options)
+    public CocktailDbContext(DbContextOptions<CocktailDbContext> options) : base(options)
     {
     }
     
     // DbSet<T>
     public DbSet<TestTable> TestTables { get; set; }
+    public DbSet<UserList> UserLists { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.UseOpenIddict();
         modelBuilder.Entity<ApplicationRole>();
     }
 

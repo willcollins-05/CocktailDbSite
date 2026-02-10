@@ -70,7 +70,7 @@ public static class DependencyInjection
                 options.UseAspNetCore();
             });
 
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped(typeof(IUserListRepository<>), typeof(UserListUserListRepository<>));
         services.AddHttpClient<ICocktailProvider, CocktailDbService>();
         return services;
     }

@@ -1,153 +1,152 @@
 ﻿@page "/"
 @attribute [StreamRendering]
+@using System.Security.Claims
 @using CocktailDbSite.Application.Services
+@using CocktailDbSite.Client.Components.Account
 @using CocktailDbSite.Domain.Models
 @using CocktailDbSite.Domain.Models.DrinkModels
+@using CocktailDbSite.Domain.Models.UserLists
 @using CocktailDbSite.Domain.Models.WebpageModels
 @rendermode InteractiveServer
 @inject CocktailDbService CocktailDbService
+@inject UserListService UserListService
 
 <PageTitle>Cocktail Bar</PageTitle>
 
-<div class="header">
-    <img class="container max-height: 100px;" alt="cocktails" src="https://advancedmixology.com/cdn/shop/articles/Five_kinds_of_classic_cocktails.jpg?v=1631787354&width=800"/>
-    <div class="d-flex justify-content-around pt-3">
-        <img alt="company logo" src="#"/>
-        <h1 class="justify-content-center">Welcome to the cocktail bar</h1>
-        <div>
-            <img alt="user img" src="#"/>
-            <p id="login-status">Logged In</p>
-        </div>
-    </div>
-
-</div>  
-
-<div id="loggedIn" >
-    <div class="d-flex justify-content-around">
-        <input @bind-value="_searchQuery" type="text" placeholder="Search" class="border border-black w-50"/>
-        <button class=".bg-dark border-radius text-black w-25" @onclick="SearchDrinks">Search</button>
-
-    </div>
-    
-    <hr/>
-    
-    @if (_drinksList != null)
-    {
-        <div class="d-flex align-items-stretch justify-content-around">
-            <div id="non-alcoholic">
+<AuthorizeView>
+    <NotAuthorized>
+        <RedirectToLoginComponent />
+    </NotAuthorized>
+    <Authorized>
+        <div class="header">
+            <img class="container max-height: 100px;" alt="cocktails" src="https://advancedmixology.com/cdn/shop/articles/Five_kinds_of_classic_cocktails.jpg?v=1631787354&width=800"/>
+            <div class="d-flex justify-content-around pt-3">
+                <img alt="company logo" src="#"/>
+                <h1 class="justify-content-center">Welcome to the cocktail bar</h1>
                 <div>
-                    <h2 class="border border-black">Non Alcoholic</h2>
+                    <img alt="user img" src="#"/>
+                    <p id="login-status">Logged In</p>
                 </div>
-                <ul id="non-alcoholic-list" class="list-unstyled">
-                    @if (_drinksList.NonAlcoholicDrinks.Any())
-                    {
-                        @foreach (Drink drink in _drinksList.NonAlcoholicDrinks)
-                        {
-                            <li class="pt-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <button @onclick="() => GenerateModal(drink.Id)">See More</button>
-                                        <p class="card-title">@drink.Name</p>
-                                        <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
-                                    </div>
-                                </div>
-                            </li>
-                        }
-                    }
-                </ul>
-            </div>
-            <div class="vr mx-3 align-self-stretch"></div>
-            <div id="alcoholic">
-                <div>
-                    <h2 class="border border-black">Alcoholic</h2>
-                </div>
-                <ul id="alcoholic-list" class="list-unstyled">
-                    @if (_drinksList.AlcoholicDrinks.Any())
-                    {
-                        @foreach (Drink drink in _drinksList.AlcoholicDrinks)
-                        {
-                            <li class="pt-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <button @onclick="() =>GenerateModal(drink.Id)">See More</button>
-                                        <p class="card-title">@drink.Name</p>
-                                        <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
-                                    </div>
-                                </div>
-                            </li>
-                        }
-                    }
-                </ul>
             </div>
         </div>
-    }
-</div>
 
-@if (_modalVisible)
-{
-    <div  id="modal" class="modal d-block">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">@drinkName Info</h3>
-                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
-                </div>
-                <div class="modal-body">
-                    <img alt="drink image" src="@drinkThumb" style="width: 100px; height: 100px;"/>
-                    <p id="drinkName">@drinkName</p>
-                    <p id="category">@category</p>
-                    <p id="glassType">@glassType</p>
-                    <p id="instructions">@instructions</p>
-                    <div id="ingredientMeasurement" class="d-flex justify-content-around">
+        <div id="loggedIn" >
+            <div class="d-flex justify-content-around">
+                <input @bind-value="_searchQuery" type="text" placeholder="Search" class="border border-black w-50"/>
+                <button class=".bg-dark border-radius text-black w-25" @onclick="SearchDrinks">Search</button>
+
+            </div>
+    
+            <hr/>
+    
+            @if (_drinksList != null)
+            {
+                <div class="d-flex align-items-stretch justify-content-around">
+                    <div id="non-alcoholic">
                         <div>
-                            @if (Ingredients != null && Ingredients.Any())
-                            {
-                                <p>Ingredients</p>
-                                <ul>
-                                    @foreach (var ingredient in Ingredients)
-                                    {
-                                        <li>@ingredient</li>
-                                    }
-                                </ul>
-                            }
+                            <h2 class="border border-black">Non Alcoholic</h2>
                         </div>
-                        <div>
-                            @if (Measurements != null && Measurements.Any())
+                        <ul id="non-alcoholic-list" class="list-unstyled">
+                            @if (_drinksList.NonAlcoholicDrinks.Any())
                             {
-                                <p>Measurements</p>
-                                <ul class="list-unstyled">
-                                    @foreach (var measurement in Measurements)
-                                    {
-                                        <li>@measurement.Amount @measurement.Unit</li>
-                                    }
-                                </ul>
+                                @foreach (Drink drink in _drinksList.NonAlcoholicDrinks)
+                                {
+                                    <li class="pt-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <button class="btn-primary" @onclick="() => GenerateModal(drink.Id)">See More</button>
+                                                <button disabled="@_isButtonsDisabled" class="btn-secondary" @onclick="() => AddDrinkToUserList(context, drink.Id)">Add To List</button>
+                                                <p class="card-title">@drink.Name</p>
+                                                <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
                             }
+                        </ul>
+                    </div>
+                    <div class="vr mx-3 align-self-stretch"></div>
+                    <div id="alcoholic">
+                        <div>
+                            <h2 class="border border-black">Alcoholic</h2>
+                        </div>
+                        <ul id="alcoholic-list" class="list-unstyled">
+                            @if (_drinksList.AlcoholicDrinks.Any())
+                            {
+                                @foreach (Drink drink in _drinksList.AlcoholicDrinks)
+                                {
+                                    <li class="pt-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <button class="btn-primary" @onclick="() =>GenerateModal(drink.Id)">See More</button>
+                                                <button disabled="@_isButtonsDisabled" class="btn-secondary" @onclick="() => AddDrinkToUserList(context, drink.Id)">Add To List</button>
+                                                <p class="card-title">@drink.Name</p>
+                                                <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+
+    @if (_modalVisible)
+        {
+            <div id="modal" class="modal d-block">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">@drinkName Info</h3>
+                            <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img alt="drink image" src="@drinkThumb"/>
+                            <p id="drinkName">@drinkName</p>
+                            <p id="category">@category</p>
+                            <p id="glassType">@glassType</p>
+                            <p id="instructions">@instructions</p>
+                            <div id="ingredientMeasurement"class="d-flex justify-content-around">
+                                <div>
+                                    @if (Ingredients != null && Ingredients.Any())
+                                    {
+                                        <p>Ingredients</p>
+                                        <ul>
+                                            @foreach (var ingredient in Ingredients)
+                                            {
+                                                <li>@ingredient</li>
+                                            }
+                                        </ul>
+                                    }
+                                </div>
+                                <div>
+                                    @if (Measurements != null && Measurements.Any())
+                                    {
+                                        <p>Measurements</p>
+                                        <ul class="list-unstyled">
+                                            @foreach (var measurement in Measurements)
+                                            {
+                                                <li>@measurement.Amount @measurement.Unit</li>
+                                            }
+                                        </ul>
+                                    }
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
-
-
                 </div>
             </div>
-        </div>
-    </div>
-}
+        }
+    </Authorized>
+</AuthorizeView>
 
-<div id="notLoggedIn" class="d-none">
-    <div class=".d-flex visible justify-content-center align-content-center">
-        <h1 class="text-center">Login</h1>
-        <p class="text-center">Username:</p>
-        <div class="d-flex justify-content-center align-content: center pb-4">
-            <input class="border border-black" type="text" placeholder="enter username"/>
-        </div>
-        <p class="text-center">Password:</p>
-        <div class="d-flex justify-content-center align-content: center pb-4">
-            <input class="border border-black" type="text" placeholder="enter username"/>
-        </div>
-    </div>
-</div>
 
 @code {
-
+    private bool _isButtonsDisabled = false;
     private bool _modalVisible = false;
     private bool _modalLoaded = false;
     private string drinkName = "";
@@ -160,6 +159,46 @@
     private string _searchQuery = string.Empty;
     private string drinkThumb;
 
+    private async Task AddDrinkToUserList(AuthenticationState authState, int drinkId)
+    {
+        _isButtonsDisabled = true;
+        Console.WriteLine("Add Drink To List Activated");
+        if (await UserListService.ApplicationUserIdAndDrinkIdExists(authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "", drinkId))
+        {
+            Console.WriteLine("Already Exists");
+            var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            Console.WriteLine("User Sub: " + userId);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                _isButtonsDisabled = false;
+                return;
+            }
+            UserList userList = await UserListService.GetFromApplicationUserIdAndDrinkId(userId, drinkId);
+            Console.WriteLine("Old Quantity: " + userList.Quantity);
+            userList.Quantity += 1;
+            Console.WriteLine("New Quantity: " + userList.Quantity);
+            await UserListService.UpdateUserList(userList);
+            _isButtonsDisabled = false;
+        }
+        else
+        {
+            Console.WriteLine("Doesn't Exist");
+            var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            Console.WriteLine("User Sub: " + userId);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                _isButtonsDisabled = false;
+                return;
+            }
+            UserList userList = new UserList();
+            userList.ApplicationUserId = userId;
+            userList.CocktailDbId = drinkId;
+            userList.Quantity = 1;
+            await UserListService.AddNewUserList(userList);
+            _isButtonsDisabled = false;
+        }
+    }
+    
     private async Task SearchDrinks()
     {
         if (string.IsNullOrWhiteSpace(_searchQuery))
