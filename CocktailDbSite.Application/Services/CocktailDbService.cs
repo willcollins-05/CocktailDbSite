@@ -27,16 +27,27 @@ public class CocktailDbService
     {
         List<Drink>? drinks = await _cocktailApi.GetDrinksByName(name);
 
+
+       
+        if (drinks != null)
+        {
+            foreach (Drink drink in drinks)
+            {
+                Console.WriteLine($"{drink.Name} , is alchoholic {drink.IsAlcoholic}");
+            }
+        }
+        
+        
+        
         HomepageDrinkLists homepageDrinkLists = new HomepageDrinkLists();
 
         if (drinks != null)
         {
-            return homepageDrinkLists;
+            homepageDrinkLists.AlcoholicDrinks = drinks!.Where(d => d.IsAlcoholic).ToList();
+            homepageDrinkLists.NonAlcoholicDrinks = drinks!.Where(d => !d.IsAlcoholic).ToList();
         }
 
-        homepageDrinkLists.AlcoholicDrinks = drinks!.Where(d => d.IsAlcoholic).ToList();
-
-        homepageDrinkLists.NonAlcoholicDrinks = drinks!.Where(d => !d.IsAlcoholic).ToList();
+        
         
         return homepageDrinkLists;
     }
