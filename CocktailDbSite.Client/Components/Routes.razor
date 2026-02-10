@@ -1,14 +1,7 @@
-﻿<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+﻿@using CocktailDbSite.Client.Components.Account
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
-            <NotAuthorized>
-                <h1>Not Authorized</h1>
-                <p>You are not authorized to view this page.</p>
-            </NotAuthorized>
-            <Authorizing>
-                <p>Authorizing...</p>
-            </Authorizing>
-        </AuthorizeRouteView>
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)"/>
         <FocusOnNavigate RouteData="routeData" Selector="h1"/>
     </Found>
 </Router>

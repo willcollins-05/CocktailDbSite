@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace CocktailDbSite.Domain.Identity;
 
 public class ApplicationRole : IdentityRole
 {
+    
 }

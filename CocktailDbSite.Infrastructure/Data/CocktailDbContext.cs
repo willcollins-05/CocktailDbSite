@@ -2,11 +2,14 @@
 using CocktailDbSite.Domain.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace CocktailDbSite.Infrastructure.Data;
 
 public class CocktailDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
+    private readonly IConfiguration _configuration;
+    
     public CocktailDbContext(DbContextOptions options) : base(options)
     {
     }
@@ -14,11 +17,18 @@ public class CocktailDbContext : IdentityDbContext<ApplicationUser, ApplicationR
     // DbSet<T>
     public DbSet<TestTable> TestTables { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<ApplicationRole>();
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connectionString = _configuration["CONNECTION_STRING"];
+            optionsBuilder.UseNpgsql(connectionString);
+        }
     }
 }
