@@ -1,0 +1,65 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
+@using CocktailDbSite.Domain.Identity
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@inject SignInManager<ApplicationUser> SignInManager
+@inject NavigationManager NavManager
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-container">
+    <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+        <DataAnnotationsValidator />
+        <h3>Sign In</h3>
+        
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+        
+        <div class="form-group mb-3">
+            <label>Email</label>
+            <InputText @bind-Value="Input.Email" class="form-control" />
+            <ValidationMessage For="() => Input.Email" />
+        </div>
+        
+        <div>
+            <label>Password</label>
+            <InputText @bind-Value="Input.Password" type="password" class="form-control" />
+            <ValidationMessage For="() => Input.Password" />
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100">Log in</button>
+    </EditForm>
+</div>
+
+@code {
+
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm] private LoginInput Input { get; set; } = new();
+
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    public async Task LoginUser()
+    {
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, false, lockoutOnFailure: false);
+
+        if (result.Succeeded)
+        {
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            ErrorMessage = "Error: Invalid login attempt.";
+        }
+    }
+
+    private sealed class LoginInput
+    {
+        [Required] [EmailAddress] public string Email { get; set; }
+        [Required] [DataType(DataType.Password)] public string Password { get; set; }
+    }
+
+}
