@@ -24,13 +24,12 @@
 
 <div id="loggedIn" >
     <div class="d-flex justify-content-around">
-        <input type="text" placeholder="Search" class="border border-black w-50"/>
-        <button class=".bg-dark border-radius text-black w-25">Filter</button>
+        <input @bind-value="_searchQuery" type="text" placeholder="Search" class="border border-black w-50"/>
+        <button class=".bg-dark border-radius text-black w-25" @onclick="SearchDrinks">Search</button>
 
     </div>
     
     <hr/>
-    
     
     @if (_drinksList != null)
     {
@@ -47,7 +46,7 @@
                             <li class="pt-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <button id="@drink.Id">See more</button>
+                                        <button @onclick="() => GenerateModal(drink.Id)">See More</button>
                                         <p class="card-title">@drink.Name</p>
                                         <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
                                     </div>
@@ -70,10 +69,9 @@
                             <li class="pt-3">
                                 <div class="card">
                                     <div class="card-body">
-                                        <button id="@drink.Id" @onclick="GenerateModel"></button>
+                                        <button @onclick="() =>GenerateModal(drink.Id)">See More</button>
                                         <p class="card-title">@drink.Name</p>
                                         <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
-
                                     </div>
                                 </div>
                             </li>
@@ -85,8 +83,54 @@
     }
 </div>
 
+@if (_modalVisible)
+{
+    <div  id="modal" class="modal d-block">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">@drinkName Info</h3>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <img alt="drink image" src="@drinkThumb"/>
+                    <p id="drinkName">@drinkName</p>
+                    <p id="category">@category</p>
+                    <p id="glassType">@glassType</p>
+                    <p id="instructions">@instructions</p>
+                    <div id="ingredientMeasurement"class="d-flex justify-content-around">
+                        <div>
+                            @if (Ingredients != null && Ingredients.Any())
+                            {
+                                <p>Ingredients</p>
+                                <ul>
+                                    @foreach (var ingredient in Ingredients)
+                                    {
+                                        <li>@ingredient</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                        <div>
+                            @if (Measurements != null && Measurements.Any())
+                            {
+                                <p>Measurements</p>
+                                <ul class="list-unstyled">
+                                    @foreach (var measurement in Measurements)
+                                    {
+                                        <li>@measurement.Amount @measurement.Unit</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    </div>
 
 
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 <div id="notLoggedIn" class="d-none">
     <div class=".d-flex visible justify-content-center align-content-center">
@@ -102,19 +146,67 @@
     </div>
 </div>
 
-
 @code {
+
+    private bool _modalVisible = false;
+    private bool _modalLoaded = false;
+    private string drinkName = "";
+    private string category = "";
+    private string glassType = "";
+    private string instructions = "";
+    private List<string> Ingredients = new List<string>();
+    private List<Measurement> Measurements = new List<Measurement>();
     private HomepageDrinkLists? _drinksList = new HomepageDrinkLists();
+    private string _searchQuery = string.Empty;
+    private string drinkThumb;
+
+    private async Task SearchDrinks()
+    {
+        if (string.IsNullOrWhiteSpace(_searchQuery))
+        {
+            _drinksList = await CocktailDbService.GetHomepageDrinksAsync();
+            return;
+        }
+
+        _drinksList = await CocktailDbService.GetDrinksByName(_searchQuery);
+        StateHasChanged();
+
+    }
 
     protected override async Task OnInitializedAsync()
     {
         _drinksList = await CocktailDbService.GetHomepageDrinksAsync() ?? new HomepageDrinkLists();
     }
 
-    private void GenerateModel()
+    private async Task<Drink> FindDrinkById(int id)
     {
-        
+
+        Drink drink = await CocktailDbService.GetDrinkById(id);
+        return drink;
     }
-    
+
+    private async Task GenerateModal(int id)
+    {
+        _modalLoaded = false;
+        
+
+        Drink drink = await FindDrinkById(id);
+        drinkName = drink.Name;
+        category = drink.Category;
+        glassType = drink.Glass;
+        instructions = drink.Instructions;
+        Ingredients = drink.Ingredients;
+        Measurements = drink.Measurements;
+        drinkThumb = drink.DrinkThumbnailUrl;
+
+        _modalVisible = true;
+        StateHasChanged();
+    }
+
+    private void CloseModal()
+    {
+        _modalVisible = false;
+        StateHasChanged();
+    }
 
 }
