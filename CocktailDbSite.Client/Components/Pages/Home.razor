@@ -93,12 +93,12 @@
                     <button type="button" class="btn-close" @onclick="CloseModal"></button>
                 </div>
                 <div class="modal-body">
-                    <img alt="drink image" src="@drinkThumb"/>
+                    <img alt="drink image" src="@drinkThumb" style="width: 100px; height: 100px;"/>
                     <p id="drinkName">@drinkName</p>
                     <p id="category">@category</p>
                     <p id="glassType">@glassType</p>
                     <p id="instructions">@instructions</p>
-                    <div id="ingredientMeasurement"class="d-flex justify-content-around">
+                    <div id="ingredientMeasurement" class="d-flex justify-content-around">
                         <div>
                             @if (Ingredients != null && Ingredients.Any())
                             {

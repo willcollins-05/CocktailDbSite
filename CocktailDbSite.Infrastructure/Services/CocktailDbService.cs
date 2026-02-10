@@ -92,7 +92,7 @@ public class CocktailDbService : ICocktailProvider
                 Category = lookupResponseJson["strCategory"]?.ToString() ?? string.Empty,
                 IsAlcoholic = (lookupResponseJson["strAlcoholic"]?.ToString() ?? "False") == "True",
                 Glass = lookupResponseJson["strGlass"]?.ToString() ?? string.Empty,
-                DrinkThumbnailUrl = lookupResponseJson["strDrinkThumbnail"]?.ToString() ?? string.Empty,
+                DrinkThumbnailUrl = lookupResponseJson["strDrinkThumb"]?.ToString() ?? string.Empty,
                 DrinkImageUrl = lookupResponseJson["strImageSource"]?.ToString() ?? string.Empty,
                 Instructions = lookupResponseJson["strInstructions"]?.ToString() ?? string.Empty,
             };
@@ -133,13 +133,15 @@ public class CocktailDbService : ICocktailProvider
 
             if (string.IsNullOrWhiteSpace(lookupResponseJsonString)) return null;
 
-            var lookupResponseJson = JObject.Parse(lookupResponseJsonString)["drinks"];
-
-            if (lookupResponseJson == null) return null;
-
+            var origin = JObject.Parse(lookupResponseJsonString);
+            
+            var drinkArray = origin["drinks"];
+            
+            if (drinkArray == null) return null;
+            
             List<Drink> drinks = new List<Drink>();
 
-            foreach (var drinkJson in lookupResponseJson["drinks"])
+            foreach (var drinkJson in drinkArray)
             {
                 var drink = new Drink()
                 {
@@ -150,7 +152,7 @@ public class CocktailDbService : ICocktailProvider
                     Category = drinkJson["strCategory"]?.ToString() ?? string.Empty,
                     IsAlcoholic = (drinkJson["strAlcoholic"]?.ToString() ?? "False") == "True",
                     Glass = drinkJson["strGlass"]?.ToString() ?? string.Empty,
-                    DrinkThumbnailUrl = drinkJson["strDrinkThumbnail"]?.ToString() ?? string.Empty,
+                    DrinkThumbnailUrl = drinkJson["strDrinkThumb"]?.ToString() ?? string.Empty,
                     DrinkImageUrl = drinkJson["strImageSource"]?.ToString() ?? string.Empty,
                     Instructions = drinkJson["strInstructions"]?.ToString() ?? string.Empty,
                 };
