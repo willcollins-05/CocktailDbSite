@@ -1,0 +1,127 @@
+﻿@page "/users-list"
+@rendermode InteractiveServer
+@using System.Security.Claims
+@using CocktailDbSite.Application.Services.WebpageServices
+@using CocktailDbSite.Domain.Identity
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<ApplicationRole> RoleManager
+@inject NavigationManager NavManager
+@inject ToastService ToastService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>User Management</PageTitle>
+
+<AuthorizeView Roles="Admin">
+    <NotAuthorized>
+        <RedirectToAccessDeniedComponent/>
+    </NotAuthorized>
+    <Authorized>
+        @if (_users == null)
+        {
+            <p><em>Loading users...</em></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Current Role</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var user in _users)
+                {
+                    <tr>
+                        <td>@user.Email</td>
+                        <td>
+                            <select class="form-select" @onchange="@(e => UpdateUserRole(user, e))">
+                                @foreach (var role in _allRoles)
+                                {
+                                    <option value="@role.Name" selected="@(user.CurrentRole == role.Name)">
+                                        @role.Name
+                                    </option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => ViewList(user)">View List</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+    private List<UserRoleViewModel> _users = new();
+    private List<ApplicationRole> _allRoles = new();
+    private string? _loggedInUserId = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allRoles = await RoleManager.Roles.ToListAsync();
+
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var loggedInUser = authenticationState.User;
+
+        if (loggedInUser.Identity!.IsAuthenticated)
+        {
+            _loggedInUserId = loggedInUser.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        }
+        
+        var identityUsers = await UserManager.Users.ToListAsync();
+
+        foreach (var user in identityUsers)
+        {
+            var roles = await UserManager.GetRolesAsync(user);
+            _users.Add(new UserRoleViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                CurrentRole = roles.FirstOrDefault() ?? "No Role"
+            });
+        }
+    }
+
+    private async Task UpdateUserRole(UserRoleViewModel userViewModel, ChangeEventArgs e)
+    {
+        var newRole = e.Value?.ToString();
+        var user = await UserManager.FindByIdAsync(userViewModel.Id);
+
+        if (userViewModel.Id.Equals(_loggedInUserId))
+        {
+            ToastService.ShowToast("ERROR: Cannot change own role.", "You cannot change your own role. If you wish to modify this account's role, it must be done using a different account.");
+            return;
+        }
+        
+        if (user != null && !string.IsNullOrEmpty(newRole))
+        {
+            var currentRoles = await UserManager.GetRolesAsync(user);
+            await UserManager.RemoveFromRolesAsync(user, currentRoles);
+            await UserManager.AddToRoleAsync(user, newRole);
+
+            userViewModel.CurrentRole = newRole;
+            ToastService.ShowToast("Successfully Updated Role", $"Successfully updated {user.Email} to role: {newRole}");
+        }
+    }
+
+    private void ViewList(UserRoleViewModel userViewModel)
+    {
+        NavManager.NavigateTo($"/list/{userViewModel.Id}");
+    }
+
+
+    public class UserRoleViewModel
+    {
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public string CurrentRole { get; set; }
+    }
+}

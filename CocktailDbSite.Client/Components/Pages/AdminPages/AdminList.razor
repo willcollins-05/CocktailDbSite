@@ -1,0 +1,50 @@
+﻿@page "/list/{UserId}"
+@using CocktailDbSite.Application.Services.WebpageServices
+@using CocktailDbSite.Client.Components.ListComponents
+@using CocktailDbSite.Domain.Identity
+@using Microsoft.AspNetCore.Identity
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject ToastService ToastService
+
+
+<AuthorizeView Roles="Admin">
+    <NotAuthorized>
+        <RedirectToAccessDeniedComponent/>
+    </NotAuthorized>
+    <Authorized>
+        <div class="row">
+            @if (_isLoaded)
+            {
+                <div class="col-12 border-bottom mb-4">
+                    <h1 class="display-4">Drink List for @_email</h1>
+                </div>
+                <MainListComponent
+                    UserId="@UserId"/>
+            }
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    [Parameter] public string UserId { get; set; } = string.Empty;
+    private string _email { get; set; } = string.Empty;
+    private bool _isLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoaded = false;
+
+        var user = await UserManager.FindByIdAsync(UserId);
+
+        if (user == null)
+        {
+            ToastService.ShowToast("Error, User not found", $"User with UserId {UserId} does not exist.");
+        }
+        
+        _email = user!.Email!;
+        
+        _isLoaded = true;
+    }
+}

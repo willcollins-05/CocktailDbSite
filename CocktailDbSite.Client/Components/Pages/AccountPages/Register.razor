@@ -63,7 +63,8 @@
         Errors.Clear();
         var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
         var result = await UserManager.CreateAsync(user, Input.Password);
-
+        await UserManager.AddToRoleAsync(user, "User");
+        
         if (result.Succeeded)
         {
             // Automatically sign them in after registering
