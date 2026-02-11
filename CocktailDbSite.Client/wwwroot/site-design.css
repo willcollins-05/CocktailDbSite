@@ -84,3 +84,12 @@ button:hover {
 .card p {
     color: white !important;
 }
+
+
+/* Made the modal to match dark site theme */
+.modal-content {
+    background-color: #0e0e0e !important;
+    color: white !important;
+    border: none !important;
+}
+
