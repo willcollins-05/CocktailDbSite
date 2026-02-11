@@ -2,6 +2,7 @@
 @attribute [StreamRendering]
 @using System.Security.Claims
 @using CocktailDbSite.Application.Services
+@using CocktailDbSite.Application.Services.WebpageServices
 @using CocktailDbSite.Client.Components.Account
 @using CocktailDbSite.Domain.Models
 @using CocktailDbSite.Domain.Models.DrinkModels
@@ -10,6 +11,7 @@
 @rendermode InteractiveServer
 @inject CocktailDbService CocktailDbService
 @inject UserListService UserListService
+@inject ToastService ToastService
 
 <PageTitle>Cocktail Bar</PageTitle>
 
@@ -18,27 +20,20 @@
         <RedirectToLoginComponent />
     </NotAuthorized>
     <Authorized>
-        <div class="header">
-            <img class="container max-height: 100px;" alt="cocktails" src="https://advancedmixology.com/cdn/shop/articles/Five_kinds_of_classic_cocktails.jpg?v=1631787354&width=800"/>
-            <div class="d-flex justify-content-around pt-3">
-                <img alt="company logo" src="#"/>
-                <h1 class="justify-content-center">Welcome to the cocktail bar</h1>
-                <div>
-                    <img alt="user img" src="#"/>
-                    <p id="login-status">Logged In</p>
-                </div>
+        <div id="loggedIn">
+            <div class="d-flex justify-content-center">
+                <img class="container max-height: 100px; rounded-5"
+                     alt="cocktails"
+                     src="https://advancedmixology.com/cdn/shop/articles/Five_kinds_of_classic_cocktails.jpg?v=1631787354&width=800"/>
             </div>
-        </div>
-
-        <div id="loggedIn" >
-            <div class="d-flex justify-content-around">
+            <div class="d-flex justify-content-center mt-4">
                 <input @bind-value="_searchQuery" type="text" placeholder="Search" class="border border-black w-50"/>
-                <button class=".bg-dark border-radius text-black w-25" @onclick="SearchDrinks">Search</button>
+                <button class="btn btn-dark border-radius text-white" @onclick="SearchDrinks">Search</button>
 
             </div>
-    
+
             <hr/>
-    
+
             @if (_drinksList != null)
             {
                 <div class="d-flex align-items-stretch justify-content-around">
@@ -78,7 +73,7 @@
                                     <li class="pt-3">
                                         <div class="card">
                                             <div class="card-body">
-                                                <button class="btn-primary" @onclick="() =>GenerateModal(drink.Id)">See More</button>
+                                                <button class="btn-primary" @onclick="() => GenerateModal(drink.Id)">See More</button>
                                                 <button disabled="@_isButtonsDisabled" class="btn-secondary" @onclick="() => AddDrinkToUserList(context, drink.Id)">Add To List</button>
                                                 <p class="card-title">@drink.Name</p>
                                                 <img alt="drink-image" src="@drink.DrinkThumbnailUrl" style="height: 250px; width: 250px;"/>
@@ -162,29 +157,23 @@
     private async Task AddDrinkToUserList(AuthenticationState authState, int drinkId)
     {
         _isButtonsDisabled = true;
-        Console.WriteLine("Add Drink To List Activated");
         if (await UserListService.ApplicationUserIdAndDrinkIdExists(authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "", drinkId))
         {
-            Console.WriteLine("Already Exists");
             var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-            Console.WriteLine("User Sub: " + userId);
             if (string.IsNullOrWhiteSpace(userId))
             {
                 _isButtonsDisabled = false;
                 return;
             }
             UserList userList = await UserListService.GetFromApplicationUserIdAndDrinkId(userId, drinkId);
-            Console.WriteLine("Old Quantity: " + userList.Quantity);
             userList.Quantity += 1;
-            Console.WriteLine("New Quantity: " + userList.Quantity);
             await UserListService.UpdateUserList(userList);
+            ToastService.ShowToast("Added to list!", "Successfully added the drink to your list.");
             _isButtonsDisabled = false;
         }
         else
         {
-            Console.WriteLine("Doesn't Exist");
             var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-            Console.WriteLine("User Sub: " + userId);
             if (string.IsNullOrWhiteSpace(userId))
             {
                 _isButtonsDisabled = false;
@@ -195,6 +184,7 @@
             userList.CocktailDbId = drinkId;
             userList.Quantity = 1;
             await UserListService.AddNewUserList(userList);
+            ToastService.ShowToast("Added to list!", "Successfully added the drink to your list.");
             _isButtonsDisabled = false;
         }
     }

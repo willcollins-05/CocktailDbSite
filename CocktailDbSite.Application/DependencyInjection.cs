@@ -1,4 +1,5 @@
 ﻿using CocktailDbSite.Application.Services;
+using CocktailDbSite.Application.Services.WebpageServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CocktailDbSite.Application;
@@ -9,6 +10,7 @@ public static class DependencyInjection
     {
         services.AddScoped<UserListService>();
         services.AddScoped<CocktailDbService>();
+        services.AddScoped<ToastService>();
         return services;
     }
     

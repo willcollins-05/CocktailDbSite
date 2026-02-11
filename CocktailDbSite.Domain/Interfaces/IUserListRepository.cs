@@ -16,4 +16,8 @@ public interface IUserListRepository<T> where T : class
     Task<T> GetFromApplicationUserIdAndDrinkId(string applicationUserId, int drinkId);
 
     Task<bool> ApplicationUserIdAndDrinkIdExists(string applicationUserId, int drinkId);
+
+    Task DeleteDrinkById(int listId);
+
+    Task DeleteDrink(T entity);
 }

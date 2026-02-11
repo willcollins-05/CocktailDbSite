@@ -1,0 +1,58 @@
+﻿@rendermode InteractiveServer
+@using CocktailDbSite.Application.Services.WebpageServices
+@inject ToastService ToastService
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div id="liveToast" 
+         class="toast @(_isVisible ? "show" : "d-none") text-bg-dark border border-secondary shadow-lg" 
+         style="opacity: @(_isVisible ? "1" : "0"); transition: opacity 0.3s ease-in-out;" 
+         role="alert" 
+         aria-live="assertive" 
+         aria-atomic="true">
+        <div class="toast-header bg-dark text-white border-bottom border-secondary">
+            <i class="bi bi-info-circle me-2 text-info"></i>
+            <strong class="me-auto">@_title</strong>
+            <button type="button" class="btn-close btn-close-white" @onclick="() => HideToast()"></button>
+        </div>
+        <div class="toast-body">
+            @_message
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private bool _isVisible;
+    private string _title = "";
+    private string _message = "";
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowToast;
+    }
+
+    private async void ShowToast(string title, string message)
+    {
+        await InvokeAsync(() =>
+        {
+            _title = title;
+            _message = message;
+            _isVisible = true;
+            StateHasChanged();
+        });
+
+        await Task.Delay(3000);
+
+        await InvokeAsync(() =>
+        {
+            _isVisible = false;
+            StateHasChanged();
+        });
+    }
+
+    private void HideToast(Task? task = null)
+    {
+        _isVisible = false;
+        InvokeAsync(StateHasChanged);
+    }
+}

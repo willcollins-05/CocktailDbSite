@@ -1,0 +1,47 @@
+﻿
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-cup-straw text-info me-2"></i>Cocktail DB Site
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Home</a>
+                </li>
+                
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/list">
+                                <i class="bi bi-list-stars me-1"></i>My Drink List
+                            </a>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <AuthorizeView>
+                    <Authorized>
+                        <span class="navbar-text me-3 text-light">
+                            Hello, @context.User.Identity?.Name
+                        </span>
+                        <LogoutButton/>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a class="btn btn-outline-info btn-sm me-2" href="/login">Login</a>
+                        <a class="btn btn-info btn-sm" href="/register">Register</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+    </div>
+</nav>

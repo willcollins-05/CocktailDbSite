@@ -61,4 +61,15 @@ public class UserListUserListRepository<T> : IUserListRepository<T> where T : Us
             .Where(u => u.CocktailDbId == drinkId)
             .AnyAsync();
     }
+
+    public async Task DeleteDrink(T entity)
+    {
+        _dbSet.Remove(entity);
+    }
+
+    public async Task DeleteDrinkById(int listId)
+    {
+        await _dbSet.Where(u => u.Id == listId)
+            .ExecuteDeleteAsync();
+    }
 }

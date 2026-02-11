@@ -6,42 +6,48 @@ namespace CocktailDbSite.Application.Services;
 
 public class UserListService
 {
-    private readonly IUserListRepository<UserList> _userListUserListRepository;
+    private readonly IUserListRepository<UserList> _userListRepository;
     
     public UserListService(IUserListRepository<UserList> userListUserListRepository)
     {
-        _userListUserListRepository = userListUserListRepository;
+        _userListRepository = userListUserListRepository;
     }
 
     public async Task AddNewUserList(UserList userList)
     {
-        await _userListUserListRepository.AddAsync(userList);
-        await _userListUserListRepository.SaveChangesAsync();
+        await _userListRepository.AddAsync(userList);
+        await _userListRepository.SaveChangesAsync();
     }
 
     public async Task<List<UserList>> GetAllUserLists()
     {
-        return await _userListUserListRepository.ListAsync();
+        return await _userListRepository.ListAsync();
     }
 
     public async Task<List<UserList>> GetAllUserListsByApplicationUserId(string applicationUserId)
     {
-        return await _userListUserListRepository.GetAllFromApplicationUserId(applicationUserId);
+        return await _userListRepository.GetAllFromApplicationUserId(applicationUserId);
     }
 
     public async Task<bool> ApplicationUserIdAndDrinkIdExists(string applicationUserId, int drinkId)
     {
-        return await _userListUserListRepository.ApplicationUserIdAndDrinkIdExists(applicationUserId, drinkId);
+        return await _userListRepository.ApplicationUserIdAndDrinkIdExists(applicationUserId, drinkId);
     }
 
     public async Task<UserList> GetFromApplicationUserIdAndDrinkId(string applicationUserId, int drinkId)
     {
-        return await _userListUserListRepository.GetFromApplicationUserIdAndDrinkId(applicationUserId, drinkId);
+        return await _userListRepository.GetFromApplicationUserIdAndDrinkId(applicationUserId, drinkId);
     }
     
     public async Task UpdateUserList(UserList userList)
     {
-        _userListUserListRepository.Update(userList);
-        await _userListUserListRepository.SaveChangesAsync();
+        _userListRepository.Update(userList);
+        await _userListRepository.SaveChangesAsync();
+    }
+
+    public async Task DeleteUserListById(int listId)
+    {
+        await _userListRepository.DeleteDrinkById(listId);
+        await _userListRepository.SaveChangesAsync();
     }
 }
