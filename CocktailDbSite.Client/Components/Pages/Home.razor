@@ -91,46 +91,50 @@
     @if (_modalVisible)
         {
             <div id="modal" class="modal d-block">
-                <div class="modal-dialog modal-fullscreen">
-                    <div class="modal-content">
-                        <div class="modal-header">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content bg-black">
+                        <div class="modal-header" style="background-color: #3a0647;">
                             <h3 class="modal-title">@drinkName Info</h3>
-                            <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                            <button type="button" class="btn-close btn-close-white" @onclick="CloseModal"></button>
                         </div>
                         <div class="modal-body">
-                            <img alt="drink image" src="@drinkThumb"/>
-                            <p id="drinkName">@drinkName</p>
-                            <p id="category">@category</p>
-                            <p id="glassType">@glassType</p>
-                            <p id="instructions">@instructions</p>
-                            <div id="ingredientMeasurement"class="d-flex justify-content-around">
-                                <div>
-                                    @if (Ingredients != null && Ingredients.Any())
-                                    {
-                                        <p>Ingredients</p>
-                                        <ul>
-                                            @foreach (var ingredient in Ingredients)
+                            <div class="d-flex justify-content-evenly">
+                                <div>                           
+                                    <p id="drinkName">Cocktail: @drinkName</p>
+                                    <p id="category">Drink Type: @category</p>
+                                    <p id="glassType">Glass Type: @glassType</p>
+                                    <p id="instructions">Instructions: @instructions</p>
+                                    <div id="ingredientMeasurement"class="d-flex justify-content-around">
+                                        <div>
+                                            @if (Ingredients != null && Ingredients.Any())
                                             {
-                                                <li>@ingredient</li>
+                                                <p>Ingredients</p>
+                                                <ul>
+                                                    @foreach (var ingredient in Ingredients)
+                                                    {
+                                                        <li>@ingredient</li>
+                                                    }
+                                                </ul>
                                             }
-                                        </ul>
-                                    }
+                                        </div>
+                                        <div>
+                                            @if (Measurements != null && Measurements.Any())
+                                            {
+                                                <p>Measurements</p>
+                                                <ul class="list-unstyled">
+                                                    @foreach (var measurement in Measurements)
+                                                    {
+                                                        <li>@measurement.Amount @measurement.Unit</li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
-                                    @if (Measurements != null && Measurements.Any())
-                                    {
-                                        <p>Measurements</p>
-                                        <ul class="list-unstyled">
-                                            @foreach (var measurement in Measurements)
-                                            {
-                                                <li>@measurement.Amount @measurement.Unit</li>
-                                            }
-                                        </ul>
-                                    }
+                                    <img style="width: 300px;" alt="drink image" src="@drinkThumb"/>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
