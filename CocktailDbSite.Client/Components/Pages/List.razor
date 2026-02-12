@@ -2,12 +2,11 @@
 @rendermode InteractiveServer
 @using CocktailDbSite.Application.Services
 @using CocktailDbSite.Application.Services.WebpageServices
+@using CocktailDbSite.Client.Components.ListComponents
 @using CocktailDbSite.Domain.Identity
 @using CocktailDbSite.Domain.Models.UserLists
 @using Microsoft.AspNetCore.Identity
-@using OpenIddict.Abstractions
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject SignInManager<ApplicationUser> SignInManager
 @inject UserListService UserListService
 @inject CocktailDbService CocktailDbService
 @inject ToastService ToastService
@@ -17,84 +16,14 @@
         <RedirectToLoginComponent />
     </NotAuthorized>
     <Authorized>
-        <div class="container my-4">
-            @if (_doesListExist)
+        <div class="row">
+            <div class="col-12 border-bottom mb-4">
+                <h1 class="display-4">Drink List</h1>
+            </div>
+            @if (_isLoaded)
             {
-                @if (_isLoaded)
-                {
-                    <div class="row">
-                        <div class="col-12 border-bottom mb-4">
-                            <h1 class="display-4">Drink List</h1>
-                        </div>
-                        
-                        @foreach (UserListWithDrink userList in _userListWithDrink)
-                        {
-                            @if (userList.Drink != null)
-                            {
-                                <div class="col-md-6 col-lg-4 mb-4">
-                                    <div class="card h-100 shadow-sm">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <h2 class="card-title h4 mb-0">
-                                                    @userList.Drink.Name 
-                                                    <span class="badge bg-primary rounded-pill ms-1">x @userList.Quantity</span>
-                                                </h2>
-                
-                                                <button class="btn btn-outline-danger btn-sm border-0" 
-                                                        @onclick="() => DeleteDrink(userList)" 
-                                                        title="Delete Drink">
-                                                    <i class="bi bi-trash3-fill"></i>
-                                                </button>
-                                            </div>
-                                            
-                                            <div class="my-3 text-center">
-                                                @if (!string.IsNullOrWhiteSpace(userList.Drink.VideoUrl))
-                                                {
-                                                    <div class="ratio ratio-16x9">
-                                                        <iframe src="@userList.Drink.VideoUrl" title="Drink Video" allowfullscreen></iframe>
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <img alt="drink image" src="@userList.Drink.DrinkThumbnailUrl" class="img-fluid rounded" style="max-height: 250px; object-fit: cover;" />
-                                                }
-                                            </div>
-
-                                            <h5 class="mt-3">Ingredients</h5>
-                                            <ul class="list-group list-group-flush">
-                                                @for (var i = 0; i < userList.Drink.Ingredients.Count; i++)
-                                                {
-                                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                                        @userList.Drink.Ingredients[i]
-                                                        <span class="text-muted small">
-                                                            @(userList.Drink.Measurements[i].Amount * userList.Quantity) @userList.Drink.Measurements[i].Unit
-                                                        </span>
-                                                    </li>
-                                                }
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="d-flex justify-content-center my-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p class="ms-3 h5">Loading...</p>
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="alert alert-info shadow-sm" role="alert">
-                    <h4 class="alert-heading">No list found</h4>
-                    <p class="mb-0">No list exists for you. Start by adding some drinks!</p>
-                </div>
+                <MainListComponent
+                    UserId="@_currentUserId"/>
             }
         </div>
     </Authorized>
@@ -102,9 +31,8 @@
 
 @code
 {
+    private string _currentUserId = string.Empty;
     private bool _isLoaded = false;
-    private bool _doesListExist = true;
-    private List<UserListWithDrink> _userListWithDrink = new List<UserListWithDrink>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,37 +40,13 @@
         var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authenticationState.User;
 
-        var currentUserId = string.Empty;
-        
+        _currentUserId = string.Empty;
+
         if (user.Identity!.IsAuthenticated)
         {
-            currentUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            var userLists = await UserListService.GetAllUserListsByApplicationUserId(currentUserId ?? string.Empty);
-            if (!userLists.Any())
-            {
-                _doesListExist = false;
-                return;
-            }
-
-            _userListWithDrink = new List<UserListWithDrink>();
-            foreach (UserList userList in userLists)
-            {
-                _userListWithDrink.Add(new UserListWithDrink()
-                {
-                    ListId = userList.Id,
-                    Quantity = userList.Quantity,
-                    Drink = await CocktailDbService.GetDrinkById(userList.CocktailDbId) ?? null
-                });
-            }
+            _currentUserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         }
-        
-        _isLoaded = true;
-    }
 
-    private async Task DeleteDrink(UserListWithDrink userList)
-    {
-        await UserListService.DeleteUserListById(userList.ListId);
-        
-        ToastService.ShowToast("Item Removed.", $"{userList.Drink!.Name} has been removed from your list.");
+        _isLoaded = true;
     }
 }

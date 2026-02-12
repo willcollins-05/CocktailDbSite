@@ -1,7 +1,34 @@
 ﻿@page "/access-denied"
+@inject NavigationManager Navigation
 
-@*TODO: Build out access denied page. 
-    - Should have a button to take to the login page OR an option to logout the user. 
-    - Include an error message including a 401 not authorized error. 
-*@
-<p>401 - Access Denied</p>
+<PageTitle>403 - Access Denied</PageTitle>
+
+<div class="container text-center mt-5">
+    <h1 class="text-danger">401 - Access Denied</h1>
+
+    <p class="lead mt-3">
+        You do not have permission to view this page.
+    </p>
+
+    <div class="mt-4">
+        <button class="btn btn-primary me-2" @onclick="GoHome">
+            Return to Home
+        </button>
+
+        <button class="btn btn-outline-secondary" @onclick="GoToLogin">
+            Go to Login
+        </button>
+    </div>
+</div>
+
+@code {
+    private void GoHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/login");
+    }
+}
