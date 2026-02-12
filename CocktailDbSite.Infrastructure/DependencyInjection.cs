@@ -18,7 +18,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<CocktailDbContext>(o => 
         {
-            o.UseNpgsql(configuration.GetConnectionString("POSTGRESQLCONNSTR_DefaultConnection"));
+            o.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             o.UseOpenIddict();
         });
 

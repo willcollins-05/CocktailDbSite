@@ -12,11 +12,11 @@ public class CocktailDbContextFactory : IDesignTimeDbContextFactory<CocktailDbCo
         var optionsBuilder = new DbContextOptionsBuilder<CocktailDbContext>();
 
         // optionsBuilder.UseNpgsql(/* ADD CONNECTION STRING HERE IF RUNNING MIGRATIONS */);
-        var connectionString = Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection");
+        var connectionString = Environment.GetEnvironmentVariable("DefaultConnection");
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            connectionString = Environment.GetEnvironmentVariable("ConnectionStrings:POSTGRESQLCONNSTR_DefaultConnection");
+            connectionString = Environment.GetEnvironmentVariable("ConnectionStrings:DefaultConnection");
         }
         
         optionsBuilder.UseNpgsql(connectionString);
