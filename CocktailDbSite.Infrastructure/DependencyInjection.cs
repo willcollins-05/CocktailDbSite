@@ -18,8 +18,14 @@ public static class DependencyInjection
     {
         services.AddDbContext<CocktailDbContext>(o => 
         {
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrWhiteSpace(connectionString))
+                connectionString = configuration["ConnectionStrings:DefaultConnection"];
+            if (string.IsNullOrWhiteSpace(connectionString))
+                connectionString = configuration["APPSETTING_ConnectionStrings:DefaultConnection"];
+            
             // o.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-            o.UseNpgsql(configuration["ConnectionStrings:DefaultConnection"]);
+            o.UseNpgsql(connectionString);
             o.UseOpenIddict();
             
         });

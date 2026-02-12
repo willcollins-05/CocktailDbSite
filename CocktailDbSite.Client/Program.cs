@@ -19,6 +19,7 @@ builder.Services.AddAuthorization();
 
 var config = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
+    .AddEnvironmentVariables()
     .Build();
 
 builder.Services.AddApplication();
