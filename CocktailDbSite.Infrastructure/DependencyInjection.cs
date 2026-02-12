@@ -55,8 +55,8 @@ public static class DependencyInjection
                 options.AllowPasswordFlow()
                     .AllowRefreshTokenFlow();
                 options.AcceptAnonymousClients(); 
-                options.AddDevelopmentEncryptionCertificate()
-                       .AddDevelopmentSigningCertificate();
+                options.AddEphemeralSigningKey()
+                       .AddEphemeralEncryptionKey();
                 options.UseAspNetCore()
                        .EnableTokenEndpointPassthrough()
                        .EnableAuthorizationEndpointPassthrough()
