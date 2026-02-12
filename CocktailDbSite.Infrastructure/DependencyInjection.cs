@@ -18,8 +18,10 @@ public static class DependencyInjection
     {
         services.AddDbContext<CocktailDbContext>(o => 
         {
-            o.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            // o.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            o.UseNpgsql(configuration["ConnectionStrings:DefaultConnection"]);
             o.UseOpenIddict();
+            
         });
 
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
